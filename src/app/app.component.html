@@ -1,0 +1,8 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div>
+  <h1>
+    Welcome to {{ name }}!
+  </h1>
+  <nz-input [nzType]="'search'" [nzPlaceHolder]="'input search text'" [(ngModel)]="searchText" style="width: 200px;"></nz-input>
+  <app-ui-tree [nodes]="data" [key]="key" [searchText]="searchText"></app-ui-tree>
+</div>
