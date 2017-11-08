@@ -437,7 +437,7 @@ export class AppComponent implements OnInit {
   dragScrollDom: any;
   dragScrollRef: ElementRef;
   dragScroll: DragScrollDirective;
-
+  index = 0;
   @ViewChild('nav', { read: DragScrollDirective }) ds: DragScrollDirective;
 
   constructor(
@@ -454,6 +454,12 @@ export class AppComponent implements OnInit {
 
 
   ngOnInit() {
+  }
+  indexChange(index) {
+    this.index = index;
+  }
+  indexGOGO() {
+    this.index++;
   }
 
   go() {

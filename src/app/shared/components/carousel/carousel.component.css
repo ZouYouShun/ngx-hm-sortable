@@ -4,3 +4,6 @@
   background-color: #000;
   overflow: hidden;
 }
+.transition {
+  transition: left .4s ease-in-out;
+}

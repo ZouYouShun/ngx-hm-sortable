@@ -1,4 +1,4 @@
-<carousel-container current-index="1">
+<carousel-container [current-index]="index">
   <ul class='pane-container'>
     <li class='pane' (click)="go()">
       <div class='vertical-center'>1</div>
@@ -14,6 +14,7 @@
     </li>
   </ul>
 </carousel-container>
+<button (click)="indexGOGO()"></button>
 
 <!-- <app-ui-tree
   [nodes]="avatars"
