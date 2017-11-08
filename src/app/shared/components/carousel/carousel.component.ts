@@ -1,4 +1,14 @@
-import { Component, AfterViewInit, OnDestroy, Input, EventEmitter, Output, ViewChild, HostListener } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  NgZone,
+  OnDestroy,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = .25;
@@ -10,11 +20,12 @@ const PANBOUNDARY = .25;
 export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   @Input('current-index') set currentIndex(value) {
-    this.ViewIndex = value;
+    this._viewIndex = value;
     if (this.itemsElm) {
-      this.drawView(this.ViewIndex);
+      this.drawView(this._viewIndex);
     }
   }
+
   @Output('index-change') indexChanged = new EventEmitter();
 
   @ViewChild('parentChild') parentChild;
@@ -25,15 +36,15 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   private elmWidth = 0;
   private elmsCount;
-  private ViewIndex = 0;
+  private _viewIndex = 0;
 
   @HostListener('window:resize', ['$event']) private onResize(event) {
     this.setViewWidth();
     // to set the left position
-    this.drawView(this.ViewIndex);
+    this.drawView(this._viewIndex);
   }
 
-  constructor() { }
+  constructor(private _zone: NgZone) { }
 
   ngAfterViewInit() {
     this.rootElm = this.parentChild.nativeElement;
@@ -45,23 +56,26 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     this.hammer = new Hammer(this.containerElm);
 
     this.hammer.on('swipeleft swiperight panleft panright panend pancancel', (e) => {
-
-      (<HTMLElement>this.containerElm).classList.remove('transition');
-      switch (e.type) {
-        case 'swipeleft':
-        case 'swiperight':
-          this.handleSwipe(e);
-          break;
-        case 'panleft':
-        case 'panright':
-        case 'panend':
-        case 'pancancel':
-          this.handlePan(e);
-          break;
-      }
+      this._zone.runOutsideAngular(() => {
+        (<HTMLElement>this.containerElm).classList.remove('transition');
+        console.log(e.type);
+        switch (e.type) {
+          case 'swipeleft':
+          case 'swiperight':
+            console.log('cool');
+            this.handleSwipe(e);
+            break;
+          case 'panleft':
+          case 'panright':
+          case 'panend':
+          case 'pancancel':
+            this.handlePan(e);
+            break;
+        }
+      });
     }
     );
-    this.drawView(this.ViewIndex);
+    this.drawView(this._viewIndex);
   }
 
   ngOnDestroy() {
@@ -71,12 +85,14 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private drawView(index) {
     (<HTMLElement>this.containerElm).classList.add('transition');
 
-    if (this.ViewIndex === index) {
-      this.ViewIndex = Math.max(0, Math.min(index, this.elmsCount - 1));
-      this.setContainerOffsetX(-this.ViewIndex * this.elmWidth, true);
-      this.indexChanged.emit(this.ViewIndex);
-    }
-    console.log(`draw ${this.ViewIndex}`);
+    this._viewIndex = Math.max(0, Math.min(index, this.elmsCount - 1));
+
+    // if (index < 0) {
+    //   this._viewIndex = this.elmsCount - 1;
+    // }
+    this.setContainerOffsetX(-this._viewIndex * this.elmWidth, true);
+    this.indexChanged.emit(this._viewIndex);
+    console.log(`draw ${this._viewIndex}`);
   }
 
   private setViewWidth() {
@@ -92,22 +108,29 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   }
 
   private next() {
-    this.drawView(++this.ViewIndex);
+    this._viewIndex++;
+    this.drawView(this._viewIndex);
   }
 
   private prev() {
-    this.drawView(--this.ViewIndex);
+    this._viewIndex--;
+    this.drawView(this._viewIndex);
   }
 
-  private handleSwipe(e) {
+  private handleSwipe(e: HammerInput) {
     // if it is swipe ;
+    console.log(e.direction);
     switch (e.direction) {
       case Hammer.DIRECTION_LEFT:
+        console.log('next');
         this.next();
         break;
       case Hammer.DIRECTION_RIGHT:
+        console.log('prev');
         this.prev();
         break;
+      default:
+        this.drawView(this._viewIndex);
     }
     this.hammer.stop(true);
   }
@@ -120,7 +143,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         if (this.outOfBound()) {
           e.deltaX *= .2;
         }
-        this.setContainerOffsetX(-this.ViewIndex * this.elmWidth + e.deltaX);
+        this.setContainerOffsetX(-this._viewIndex * this.elmWidth + e.deltaX);
         // console.log(-currentPane * paneWidth + e.deltaX);
         break;
       case 'panend':
@@ -132,7 +155,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
             this.next();
           }
         } else {
-          this.drawView(this.ViewIndex);
+          this.drawView(this._viewIndex);
         }
         break;
     }
@@ -140,7 +163,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   private outOfBound() {
     const left = this.containerElm.offsetLeft;
-    return (this.ViewIndex === 0 && left >= 0) ||
-      (this.ViewIndex === this.elmsCount - 1 && left <= -this.elmWidth * (this.elmsCount - 1));
+    return (this._viewIndex === 0 && left >= 0) ||
+      (this._viewIndex === this.elmsCount - 1 && left <= -this.elmWidth * (this.elmsCount - 1));
   }
 }

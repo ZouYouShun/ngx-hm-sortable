@@ -9,6 +9,7 @@ import { CarouselDirective } from './directive/carousel.directive';
 import { DragScrollDirective } from './directive/drag-scroll/drag-scroll.directive';
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { CarouselItemComponent } from './components/carousel/carousel-item/carousel-item.component';
+import { CarouselControllerComponent } from './components/carousel/carousel-controller/carousel-controller.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { CarouselItemComponent } from './components/carousel/carousel-item/carou
     DragScrollDirective,
     CarouselComponent,
     CarouselItemComponent,
+    CarouselControllerComponent,
   ],
   exports: [
     UiTreeComponent,
