@@ -23,6 +23,5 @@ export class UiTreeComponent {
   constructor() { }
 
   complete(event) {
-    console.log(event);
   }
 }

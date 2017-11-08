@@ -1,9 +1,7 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
@@ -15,14 +13,12 @@ import { SharedModule } from './shared/shared.module';
   ],
   imports: [
     BrowserModule,
-    FormsModule,
-    HttpModule,
     BrowserAnimationsModule,
-    NgZorroAntdModule.forRoot(),
+    FormsModule,
     SharedModule
   ],
   providers: [],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  schemas: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

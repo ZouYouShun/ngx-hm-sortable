@@ -1,11 +1,11 @@
-import { AfterViewInit, Directive, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 
 import { elementsFromPoint, insertAfter, removeElement } from '../ts';
 
 @Directive({
   selector: '[hm-sortable]'
 })
-export class HmDirective implements AfterViewInit {
+export class HmDirective implements AfterViewInit, OnDestroy {
 
   @Input('hm-sortable') sourceObj;
   @Input('hm-sortable-id') sourceId;
@@ -55,7 +55,7 @@ export class HmDirective implements AfterViewInit {
   constructor(private parentELm: ElementRef) { }
 
   ngAfterViewInit(): void {
-    console.log(this.SourceEnable);
+    // console.log(this.SourceEnable);
     this.parentELm.nativeElement.id = this.uniqueId
       = `SortParent${this.sourceId || Math.ceil(Math.random() * 100000000)}`;
 
@@ -64,6 +64,12 @@ export class HmDirective implements AfterViewInit {
       this.elms = this.setSelectorElm(this.parentELm.nativeElement);
       this.hms = this.bindHammer(this.getMoveSelector(this.parentELm.nativeElement));
     }
+  }
+
+  ngOnDestroy() {
+    this.hms.forEach(hm => {
+      hm.destroy();
+    });
   }
 
   private setSelectorElm(elm) {

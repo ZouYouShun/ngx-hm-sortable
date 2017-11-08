@@ -1,6 +1,6 @@
 <!-- <button (click)="enable=!enable">222</button> -->
 
-<nz-switch [(ngModel)]="enable"></nz-switch>
+<input type="checkbox" [(ngModel)]="enable">
 <ul
   *ngIf="nodes.length"
   [hm-sortable]="nodes"
