@@ -1,6 +1,6 @@
 <!-- <button (click)="enable=!enable">222</button> -->
 
-<input type="checkbox" [(ngModel)]="enable">
+Enable sortable: <input type="checkbox" [(ngModel)]="enable">
 <ul
   *ngIf="nodes.length"
   [hm-sortable]="nodes"
