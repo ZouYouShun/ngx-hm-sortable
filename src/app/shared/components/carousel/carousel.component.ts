@@ -1,28 +1,32 @@
 import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/concatMap';
+import 'rxjs/add/observable/fromEvent';
+
+
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/merge';
 
 import {
-    AfterViewInit,
-    Component,
-    EventEmitter,
-    HostListener,
-    Input,
-    NgZone,
-    OnDestroy,
-    Output,
-    ViewChild,
-    ViewEncapsulation,
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  NgZone,
+  OnDestroy,
+  Output,
+  ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-// import 'rxjs/add/operator/map';
-// import 'rxjs/add/operator/throttleTime';
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = 0.25;
 @Component({
@@ -53,11 +57,14 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private _autoplay = false;
   @Input('autoplay')
   set autoplay(value) {
-    if (value) {
-      this.sub$ = this.doNext.subscribe();
-    } else {
-      // tslint:disable-next-line:curly
-      if (this.sub$) this.sub$.unsubscribe();
+
+    if (this.itemsElm) {
+      if (value) {
+        this.sub$ = this.doNext.subscribe();
+      } else {
+        // tslint:disable-next-line:curly
+        if (this.sub$) this.sub$.unsubscribe();
+      }
     }
     this._autoplay = value;
   }
@@ -73,15 +80,16 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private itemsElm: Array<any>;
   private hammer: HammerManager;
   private elmWidth = 0;
+
+  private _looping = false;
   private restart = new BehaviorSubject<any>(null);
   private onMove = new Subject<any>();
-  private doNext = this.restart.delay(Math.abs(this.delay - this.speed))
-    // .throttleTime(Math.abs(this.delay - this.speed))
-    // .map((x) => console.log(x))
-    .concatMap(e =>
-      Observable.interval(this.speed)
-        .do(() => this.currentIndex += this.scrollNum)
-        .takeUntil(this.onMove));
+
+  private mourseOver: Observable<any>;
+  private mourseLeave: Observable<any>;
+
+  private doNext: Observable<any>;
+
   private sub$: Subscription;
 
   @HostListener('window:resize', ['$event'])
@@ -95,6 +103,25 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.rootElm = this.parentChild.nativeElement;
     this.containerElm = this.rootElm.children[0];
+    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover');
+    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave');
+
+    const startEvent = this.restart.asObservable().merge(this.mourseLeave).map(() => console.log('restart'));
+    const stopEvent = this.mourseOver.merge(this.onMove).map(() => console.log('stop'));
+
+    this.doNext = startEvent
+      .delay(Math.abs(this.delay - this.speed))
+      .switchMap(e =>
+        Observable.interval(this.speed)
+          .takeUntil(stopEvent)
+          .map(() => {
+            this.currentIndex += this.scrollNum;
+          }));
+
+    if (this.autoplay) {
+      this.sub$ = this.doNext.subscribe();
+    }
+
     this.itemsElm = Array.from(this.containerElm.children);
     this.setViewWidth();
 
@@ -114,12 +141,12 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
       this._zone.runOutsideAngular(() => {
         (<HTMLAnchorElement>this.containerElm).classList.remove('transition');
         (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.add('grabbing');
-        this.onMove.next();
+        this.sub$.unsubscribe();
+        this.sub$ = this.doNext.subscribe();
         switch (e.type) {
           case 'swipeleft':
           case 'swiperight':
             this.handleSwipe(e);
-            this.restart.next(null);
             break;
           case 'panleft':
           case 'panright':
@@ -194,7 +221,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         break;
       case 'panend':
       case 'pancancel':
-        this.restart.next(null);
         (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
         if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
           if (e.deltaX > 0) {
