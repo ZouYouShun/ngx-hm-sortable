@@ -106,8 +106,10 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover');
     this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave');
 
-    const startEvent = this.restart.asObservable().merge(this.mourseLeave).map(() => console.log('restart'));
-    const stopEvent = this.mourseOver.merge(this.onMove).map(() => console.log('stop'));
+    // const startEvent = this.restart.asObservable().merge(this.mourseLeave).map(() => console.log('restart'));
+    // const stopEvent = this.onMove.merge(this.mourseOver).map(() => console.log('stop'));
+    const startEvent = this.restart.asObservable().map(() => console.log('restart'));
+    const stopEvent = this.onMove.map(() => console.log('stop'));
 
     this.doNext = startEvent
       .delay(Math.abs(this.delay - this.speed))
@@ -121,6 +123,8 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     if (this.autoplay) {
       this.sub$ = this.doNext.subscribe();
     }
+    // this.sub$.unsubscribe();
+    // this.sub$ = this.doNext.subscribe();
 
     this.itemsElm = Array.from(this.containerElm.children);
     this.setViewWidth();
@@ -141,12 +145,12 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
       this._zone.runOutsideAngular(() => {
         (<HTMLAnchorElement>this.containerElm).classList.remove('transition');
         (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.add('grabbing');
-        this.sub$.unsubscribe();
-        this.sub$ = this.doNext.subscribe();
+        this.onMove.next();
         switch (e.type) {
           case 'swipeleft':
           case 'swiperight':
             this.handleSwipe(e);
+            this.restart.next(null);
             break;
           case 'panleft':
           case 'panright':
@@ -221,6 +225,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         break;
       case 'panend':
       case 'pancancel':
+        this.restart.next(null);
         (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
         if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
           if (e.deltaX > 0) {
