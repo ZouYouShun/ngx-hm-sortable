@@ -1,24 +1,27 @@
-<carousel-container [current-index]="index">
-  <ul class='pane-container'>
-    <li class='pane' (click)="go()">
-      <div class='vertical-center'>1</div>
-    </li>
-    <li class='pane'>
-      <div class='vertical-center'>2</div>
-    </li>
-    <li class='pane'>
-      <div class='vertical-center'>3</div>
-    </li>
-    <li class='pane'>
-      <div class='vertical-center'>4</div>
+<input type="checkbox" [(ngModel)]="enable">
+<carousel-container
+  [current-index]="index"
+  [autoplay]="enable"
+  [show-num]="3"
+  [scroll-num]="1"
+  [autoplay-speed]="1000"
+  [between-delay]="3000"
+  [center-mode]="true">
+  <ul class="pane-container"  >
+    <li class="pane" *ngFor="let avatar of avatars" >
+      {{avatar.name}}
+        <img [src]="avatar.image" [alt]="avatar.name" style="width:100px" >
     </li>
   </ul>
 </carousel-container>
+
+
+
 <!-- <button (click)="index=index+1">+1</button>
 <button (click)="index=index-1">-1</button>
 {{index}} -->
-<app-ui-tree
-  [nodes]="avatars"></app-ui-tree>
+<!-- <app-ui-tree
+  [nodes]="avatars"></app-ui-tree> -->
 
 <!-- <div style="overflow:hidden;width:80%">
   <div

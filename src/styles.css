@@ -1,17 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
-.grab {
-  /* 抓抓抓 */
-  cursor: -webkit-grab;
-  cursor: -moz-grab;
-  cursor: grab;
-}
-
-.grabbing {
-  /* 抓住抓住 */
-  cursor: -webkit-grabbing;
-  cursor: -moz-grabbing;
-  cursor: grabbing;
+img {
+  pointer-events: none
 }
 
 .pane-container {
@@ -29,35 +19,6 @@
 }
 
 .pane {
-  float: left;
-  height: 100%;
-  width: 100%;
-}
-
-.pane div {
+  display: inline-block;
   text-align: center;
-  font-size: 3em;
-  color: #fff;
-}
-
-.vertical-center {
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.pane-container li.pane:nth-child(1) {
-  background: #42d692;
-}
-
-.pane-container li.pane:nth-child(2) {
-  background: #4986e7;
-}
-
-.pane-container li.pane:nth-child(3) {
-  background: #d06b64;
-}
-
-.pane-container li.pane:nth-child(4) {
-  background: #42d692;
 }

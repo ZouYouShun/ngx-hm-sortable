@@ -27,20 +27,35 @@ export class AppComponent implements OnInit {
     'yolo.png'
   ];
 
+  enable = true;
 
   avatars = [
     {
-      name: 'matthew',
+      name: '1',
       image: 'http://semantic-ui.com/images/avatar2/large/matthew.png',
       visible: false
     },
     {
-      name: 'chris',
+      name: '2',
       image: 'http://semantic-ui.com/images/avatar/large/chris.jpg',
       visible: false
     },
     {
-      name: 'jenny',
+      name: '3',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'http://semantic-ui.com/images/avatar2/large/matthew.png',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'http://semantic-ui.com/images/avatar/large/chris.jpg',
+      visible: false
+    },
+    {
+      name: '6',
       image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
       visible: false
     },
