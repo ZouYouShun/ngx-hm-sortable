@@ -2,13 +2,13 @@
 <button (click)="cdirection()">{{direction}}</button>
 <carousel-container
   [current-index]="index"
-  [autoplay]="enable"
+  [autoplay]="false"
+  [infinite]="enable"
   [show-num]="2"
-  [scroll-num]="1"
+  [scroll-num]="2"
   [autoplay-speed]="1000"
   [autoplay-direction]="direction"
-  [between-delay]="1000"
-  [center-mode]="true">
+  [between-delay]="1000">
   <ul class="pane-container"  >
     <li class="pane" *ngFor="let avatar of avatars" >
       {{avatar.name}}
