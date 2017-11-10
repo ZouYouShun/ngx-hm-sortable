@@ -1,6 +1,6 @@
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/delay';
+import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
@@ -97,16 +97,16 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.rootElm = this.parentChild.nativeElement;
     this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
-    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover').do(() => { console.log(11); });
+    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover');
     this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave');
 
-    const startEvent = this.restart.asObservable().merge(this.mourseLeave).map(() => console.log('restart'));
-    const stopEvent = this.onMove.merge(this.mourseOver).map(() => console.log('stop'));
-    // const startEvent = this.restart.asObservable().map(() => console.log('restart'));
-    // const stopEvent = this.onMove.map(() => console.log('stop'));
+    const startEvent = this.restart.asObservable().merge(this.mourseLeave);
+    const stopEvent = this.onMove.merge(this.mourseOver);
+    // const startEvent = this.restart.asObservable().merge(this.mourseLeave).map(() => console.log('restart'));
+    // const stopEvent = this.onMove.merge(this.mourseOver).map(() => console.log('stop'));
 
     this.doNext = startEvent
-      .delay(Math.abs(this.delay - this.speed))
+      .debounceTime(Math.abs(this.delay - this.speed))
       .switchMap(e =>
         Observable.interval(this.speed)
           .takeUntil(stopEvent)
@@ -146,7 +146,7 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
           case 'swipeleft':
           case 'swiperight':
             this.handleSwipe(e);
-            // this.restart.next(null);
+            this.restart.next(null);
             break;
           case 'panleft':
           case 'panright':
@@ -231,7 +231,7 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
         break;
       case 'panend':
       case 'pancancel':
-        // this.restart.next(null);
+        this.restart.next(null);
         (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
         if (this.infinite || Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
           if (e.deltaX > 0) {
