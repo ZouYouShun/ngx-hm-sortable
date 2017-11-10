@@ -38,11 +38,15 @@ const PANBOUNDARY = 0.25;
 export class CarouselComponent implements AfterViewInit, OnDestroy {
   @ViewChild('parentChild') parentChild;
 
-  @Input('center-mode') centerMode = false;
+  // @Input('center-mode') centerMode = false;
+  @Input('infinite') infinite = false;
+
   @Input('autoplay-speed') speed = 5000;
   @Input('between-delay') delay = 8000;
+  @Input('autoplay-direction') direction: DIRECTION = DIRECTION.RIGHT;
   @Input('show-num') showNum = 1;
   @Input('scroll-num') scrollNum = 1;
+  private _viewIndex = 0;
   @Input('current-index')
   set currentIndex(value) {
     this._viewIndex = value;
@@ -53,7 +57,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   get currentIndex() {
     return this._viewIndex;
   }
-
   private _autoplay = false;
   @Input('autoplay')
   set autoplay(value) {
@@ -73,7 +76,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   @Output('index-change') indexChanged = new EventEmitter();
 
-  private _viewIndex = 0;
   private rootElm;
   private containerElm;
   private itemsElm: Array<any>;
@@ -86,6 +88,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   private mourseOver: Observable<any>;
   private mourseLeave: Observable<any>;
+  private mostRightIndex = 0;
 
   private doNext: Observable<any>;
 
@@ -116,7 +119,8 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         Observable.interval(this.speed)
           .takeUntil(stopEvent)
           .map(() => {
-            this.currentIndex += this.scrollNum;
+            if (this.direction === DIRECTION.LEFT) this.currentIndex -= this.scrollNum;
+            else this.currentIndex += this.scrollNum;
           }));
 
     if (this.autoplay) {
@@ -129,6 +133,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     this.setViewWidth();
 
     this.hammer = this.bindHammer();
+    this.mostRightIndex = this.itemsElm.length - this.showNum;
 
     this.drawView(this.currentIndex);
   }
@@ -163,24 +168,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     return hm;
   }
 
-  private drawView(index) {
-    (<HTMLAnchorElement>this.containerElm).classList.add('transition');
-
-    if (this.autoplay) {
-      if (index < 0) {
-        this._viewIndex = this.itemsElm.length - 1;
-      }
-      if (index >= this.itemsElm.length) {
-        this._viewIndex = 0;
-      }
-    } else {
-      this._viewIndex = Math.max(0, Math.min(index, this.itemsElm.length - 1));
-    }
-
-    this.setContainerOffsetX(-this.currentIndex * this.elmWidth);
-    this.indexChanged.emit(this.currentIndex);
-  }
-
   private setViewWidth() {
     this.containerElm.style.position = 'relative';
     this.elmWidth = this.rootElm.clientWidth / this.showNum;
@@ -191,19 +178,47 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     this.containerElm.style.width = `${this.elmWidth * this.itemsElm.length}px`;
   }
 
-  private setContainerOffsetX(offsetX) {
-    this.containerElm.style.left = `${offsetX}px`;
+  private drawView(index) {
+    (<HTMLAnchorElement>this.containerElm).classList.add('transition');
+
+    if (this.autoplay || this.infinite) {
+      this.playCycle(index);
+    } else {
+      this._viewIndex = Math.max(0, Math.min(index, this.mostRightIndex));
+    }
+
+    this.containerElm.style.left = `${-this.currentIndex * this.elmWidth}px`;
+    this.indexChanged.emit(this.currentIndex);
+  }
+
+  private playCycle(index: any) {
+    switch (this.direction) {
+      case DIRECTION.LEFT:
+        if (index === -this.scrollNum) {
+          this._viewIndex = this.mostRightIndex;
+        } else if (index > this.mostRightIndex || index < 0) {
+          this._viewIndex = 0;
+        }
+        break;
+      case DIRECTION.RIGHT:
+        if (index === this.mostRightIndex + this.scrollNum) {
+          this._viewIndex = 0;
+        } else if (index < 0 || this._viewIndex >= this.mostRightIndex) {
+          this._viewIndex = this.mostRightIndex;
+        }
+        break;
+    }
   }
 
   private handleSwipe(e: HammerInput) {
-    (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove(
-      'grabbing'
-    );
+    (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
     switch (e.direction) {
       case Hammer.DIRECTION_LEFT:
+        this.direction = DIRECTION.RIGHT;
         this.currentIndex += this.scrollNum;
         break;
       case Hammer.DIRECTION_RIGHT:
+        this.direction = DIRECTION.LEFT;
         this.currentIndex -= this.scrollNum;
         break;
       default:
@@ -217,16 +232,16 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
       case 'panleft':
       case 'panright':
         // Slow down at the first and last pane.
-        if (this.outOfBound(e.type)) {
+        if (this.outOfBound(e.type) && (!this.infinite)) {
           e.deltaX *= 0.5;
         }
-        this.setContainerOffsetX(-this.currentIndex * this.elmWidth + e.deltaX);
+        this.containerElm.style.left = `${-this.currentIndex * this.elmWidth + e.deltaX}px`;
         break;
       case 'panend':
       case 'pancancel':
         this.restart.next(null);
         (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
-        if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
+        if (this.infinite || Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
           if (e.deltaX > 0) {
             this.currentIndex -= this.scrollNum;
           } else {
@@ -242,9 +257,14 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private outOfBound(type) {
     switch (type) {
       case 'panleft':
-        return this.currentIndex === this.itemsElm.length - 1;
+        return this.currentIndex === this.mostRightIndex;
       case 'panright':
         return this.currentIndex === 0;
     }
   }
+}
+
+export enum DIRECTION {
+  LEFT = 'left',
+  RIGHT = 'right'
 }

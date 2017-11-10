@@ -2,12 +2,14 @@ import { DragScrollDirective } from './shared/directive/drag-scroll/drag-scroll.
 import { Component, OnInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
+import { DIRECTION } from './shared/components/carousel/carousel.component';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  direction = DIRECTION.RIGHT;
   title = 'app works!';
   hideScrollbar;
   disabled;
@@ -82,6 +84,9 @@ export class AppComponent implements OnInit {
       .registerFontClassAlias('fontawesome', 'fa');
   }
 
+  cdirection() {
+    this.direction = this.direction === DIRECTION.LEFT ? DIRECTION.RIGHT : DIRECTION.LEFT;
+  }
 
   ngOnInit() {
   }
