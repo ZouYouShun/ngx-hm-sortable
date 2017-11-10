@@ -62,7 +62,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
       if (value) {
         this.sub$ = this.doNext.subscribe();
       } else {
-        // tslint:disable-next-line:curly
         if (this.sub$) this.sub$.unsubscribe();
       }
     }
