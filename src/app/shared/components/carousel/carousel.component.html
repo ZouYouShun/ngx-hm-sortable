@@ -1,3 +1,21 @@
-<div #parentChild class="carousel">
-  <ng-content></ng-content>
+<input type="checkbox" [(ngModel)]="enable">
+<button (click)="cdirection()">{{direction}}</button>
+
+<div
+  class="carousel"
+  hm-carousel
+  [current-index]="index"
+  [autoplay]="enable"
+  [infinite]="enable"
+  [show-num]="4"
+  [scroll-num]="1"
+  [autoplay-speed]="1000"
+  [autoplay-direction]="direction"
+  [between-delay]="1000">
+  <ul class="pane-container"  >
+    <li class="pane" *ngFor="let avatar of avatars" >
+      {{avatar.name}}
+        <img [src]="avatar.image" [alt]="avatar.name" style="width:100px" >
+    </li>
+  </ul>
 </div>

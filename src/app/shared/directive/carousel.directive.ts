@@ -1,125 +1,262 @@
-import { AfterViewInit, Directive, HostListener, ElementRef } from '@angular/core';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/delay';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/merge';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/takeUntil';
 
+import {
+    AfterViewInit,
+    Directive,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    NgZone,
+    OnDestroy,
+    Output,
+} from '@angular/core';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+
+
+// if the pane is paned .25, switch to the next pane.
+const PANBOUNDARY = 0.25;
 @Directive({
   selector: '[hm-carousel]'
 })
-export class CarouselDirective implements AfterViewInit {
+export class CarouselDirective implements AfterViewInit, OnDestroy {
+  // @Input('center-mode') centerMode = false;
+  @Input('infinite') infinite = false;
 
-  $carousel;
-  $container;
-  $panes;
-
-  paneWidth = 0;
-  paneCount;
-  panBoundary = .25; // if the pane is paned .25, switch to the next pane.
-  currentPane = 0;
-
-  constructor(private _rootElm: ElementRef) {
+  @Input('autoplay-speed') speed = 5000;
+  @Input('between-delay') delay = 8000;
+  @Input('autoplay-direction') direction: RUN_DIRECTION = RUN_DIRECTION.RIGHT;
+  @Input('show-num') showNum = 1;
+  @Input('scroll-num') scrollNum = 1;
+  private _viewIndex = 0;
+  @Input('current-index')
+  set currentIndex(value) {
+    this._viewIndex = value;
+    if (this.itemsElm) {
+      this.drawView(this._viewIndex);
+    }
   }
-
-  @HostListener('window:resize', ['$event']) private onResize(event) {
-    this.setPaneSize();
-    this.showPane(this.currentPane);
+  get currentIndex() {
+    return this._viewIndex;
   }
+  private _autoplay = false;
+  @Input('autoplay')
+  set autoplay(value) {
 
-  ngAfterViewInit() {
-    this.$carousel = this._rootElm.nativeElement;
-    this.$container = this.$carousel.children[0];
-    this.$panes = Array.from(this.$container.children);
-    this.paneCount = this.$panes.length;
-    console.log(this);
-    this.setPaneSize();
-
-    new Hammer(this.$container).on('swipeleft swiperight panleft panright panend pancancel', (e) => {
-      console.log('ss');
-      switch (e.type) {
-        case 'swipeleft':
-        case 'swiperight':
-          this.handleSwipe(e);
-          break;
-        case 'panleft':
-        case 'panright':
-        case 'panend':
-        case 'pancancel':
-          this.handlePan(e);
-          break;
+    if (this.itemsElm) {
+      if (value) {
+        this.sub$ = this.doNext.subscribe();
+      } else {
+        if (this.sub$) this.sub$.unsubscribe();
       }
     }
-    );
-
-    this.showPane(0);
+    this._autoplay = value;
+  }
+  get autoplay() {
+    return this._autoplay;
   }
 
+  @Output('index-change') indexChanged = new EventEmitter();
 
-  setPaneSize() {
-    this.paneWidth = this.$carousel.clientWidth;
-    this.$panes.forEach(elm => {
-      elm.style.width = `${this.paneWidth}px`;
+  private rootElm: HTMLAnchorElement;
+  private containerElm: HTMLAnchorElement;
+  private itemsElm: Array<Element>;
+  private hammer: HammerManager;
+  private elmWidth = 0;
+
+  private _looping = false;
+  private restart = new BehaviorSubject<any>(null);
+  private onMove = new Subject<any>();
+
+  private mourseOver: Observable<any>;
+  private mourseLeave: Observable<any>;
+  private mostRightIndex = 0;
+
+  private doNext: Observable<any>;
+
+  private sub$: Subscription;
+
+  @HostListener('window:resize', ['$event'])
+  private onResize(event) {
+    this.setViewWidth();
+    this.drawView(this.currentIndex);
+  }
+
+  constructor(private _zone: NgZone, private parentChild: ElementRef) { }
+
+  ngAfterViewInit() {
+    this.rootElm = this.parentChild.nativeElement;
+    this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
+    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover').do(() => { console.log(11); });
+    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave');
+
+    const startEvent = this.restart.asObservable().merge(this.mourseLeave).map(() => console.log('restart'));
+    const stopEvent = this.onMove.merge(this.mourseOver).map(() => console.log('stop'));
+    // const startEvent = this.restart.asObservable().map(() => console.log('restart'));
+    // const stopEvent = this.onMove.map(() => console.log('stop'));
+
+    this.doNext = startEvent
+      .delay(Math.abs(this.delay - this.speed))
+      .switchMap(e =>
+        Observable.interval(this.speed)
+          .takeUntil(stopEvent)
+          .map(() => {
+            if (this.direction === RUN_DIRECTION.LEFT) this.currentIndex -= this.scrollNum;
+            else this.currentIndex += this.scrollNum;
+          }));
+
+    if (this.autoplay) {
+      this.sub$ = this.doNext.subscribe();
+    }
+    // this.sub$.unsubscribe();
+    // this.sub$ = this.doNext.subscribe();
+
+    this.itemsElm = Array.from(this.containerElm.children);
+    this.setViewWidth();
+
+    this.hammer = this.bindHammer();
+    this.mostRightIndex = this.itemsElm.length - this.showNum;
+
+    this.drawView(this.currentIndex);
+  }
+
+  ngOnDestroy() {
+    this.hammer.destroy();
+    this.sub$.unsubscribe();
+  }
+
+  private bindHammer() {
+    const hm = new Hammer(this.rootElm);
+    hm.on('swipeleft swiperight panleft panright panend pancancel', e => {
+      this._zone.runOutsideAngular(() => {
+        (<HTMLAnchorElement>this.containerElm).classList.remove('transition');
+        (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.add('grabbing');
+        this.onMove.next();
+        switch (e.type) {
+          case 'swipeleft':
+          case 'swiperight':
+            this.handleSwipe(e);
+            // this.restart.next(null);
+            break;
+          case 'panleft':
+          case 'panright':
+          case 'panend':
+          case 'pancancel':
+            this.handlePan(e);
+            break;
+        }
+      });
     });
-    this.$container.style.width = `${this.paneWidth * this.paneCount}px`;
+    return hm;
   }
 
-  showPane(index) {
-    this.currentPane = Math.max(0, Math.min(index, this.paneCount - 1));
-    this.setContainerOffsetX(-this.currentPane * this.paneWidth, true);
+  private setViewWidth() {
+    this.containerElm.style.position = 'relative';
+    this.elmWidth = this.rootElm.clientWidth / this.showNum;
+    this.itemsElm.forEach((elm: HTMLAnchorElement) => {
+      elm.style.width = `${this.elmWidth}px`;
+      elm.classList.add('grab');
+    });
+    this.containerElm.style.width = `${this.elmWidth * this.itemsElm.length}px`;
   }
 
-  setContainerOffsetX(offsetX, doTransition?) {
-    this.$container.style.left = `${offsetX}px`;
+  private drawView(index: number) {
+    (<HTMLAnchorElement>this.containerElm).classList.add('transition');
+
+    if (this.autoplay || this.infinite) {
+      this.playCycle(index);
+    } else {
+      this._viewIndex = Math.max(0, Math.min(index, this.mostRightIndex));
+    }
+
+    this.containerElm.style.left = `${-this.currentIndex * this.elmWidth}px`;
+    this.indexChanged.emit(this.currentIndex);
   }
 
-
-  next() {
-    this.showPane(++this.currentPane);
-  }
-
-  prev() {
-    this.showPane(--this.currentPane);
-  }
-
-  handleSwipe(e) {
-    switch (e.direction) {
-      case Hammer.DIRECTION_LEFT:
-        this.next();
+  private playCycle(index: any) {
+    switch (this.direction) {
+      case RUN_DIRECTION.LEFT:
+        if (index === -this.scrollNum) {
+          this._viewIndex = this.mostRightIndex;
+        } else if (index > this.mostRightIndex || index < 0) {
+          this._viewIndex = 0;
+        }
         break;
-      case Hammer.DIRECTION_RIGHT:
-        this.prev();
+      case RUN_DIRECTION.RIGHT:
+        if (index === this.mostRightIndex + this.scrollNum) {
+          this._viewIndex = 0;
+        } else if (index < 0 || this._viewIndex >= this.mostRightIndex) {
+          this._viewIndex = this.mostRightIndex;
+        }
         break;
     }
-    // hammer.stop(true);
   }
 
-  outOfBound() {
-    const left = this.$container.offsetLeft;
-    return (this.currentPane === 0 && left >= 0) ||
-      (this.currentPane === this.paneCount - 1 && left <= -this.paneWidth * (this.paneCount - 1));
+  private handleSwipe(e: HammerInput) {
+    (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
+    switch (e.direction) {
+      case Hammer.DIRECTION_LEFT:
+        this.direction = RUN_DIRECTION.RIGHT;
+        this.currentIndex += this.scrollNum;
+        break;
+      case Hammer.DIRECTION_RIGHT:
+        this.direction = RUN_DIRECTION.LEFT;
+        this.currentIndex -= this.scrollNum;
+        break;
+      default:
+        this.drawView(this.currentIndex);
+    }
+    this.hammer.stop(true);
   }
 
-
-  handlePan(e) {
+  private handlePan(e: HammerInput) {
     switch (e.type) {
       case 'panleft':
       case 'panright':
         // Slow down at the first and last pane.
-        if (this.outOfBound()) {
-          e.deltaX *= .2;
+        if (this.outOfBound(e.type) && (!this.infinite)) {
+          e.deltaX *= 0.5;
         }
-        this.setContainerOffsetX(-this.currentPane * this.paneWidth + e.deltaX);
-        // console.log(-currentPane * paneWidth + e.deltaX);
+        this.containerElm.style.left = `${-this.currentIndex * this.elmWidth + e.deltaX}px`;
         break;
       case 'panend':
       case 'pancancel':
-        if (Math.abs(e.deltaX) > this.paneWidth * this.panBoundary) {
+        // this.restart.next(null);
+        (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
+        if (this.infinite || Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
           if (e.deltaX > 0) {
-            this.prev();
+            this.currentIndex -= this.scrollNum;
           } else {
-            this.next();
+            this.currentIndex += this.scrollNum;
           }
-        } else {
-          this.showPane(this.currentPane);
+          break;
         }
+        this.drawView(this.currentIndex);
         break;
     }
   }
 
+  private outOfBound(type) {
+    switch (type) {
+      case 'panleft':
+        return this.currentIndex === this.mostRightIndex;
+      case 'panright':
+        return this.currentIndex === 0;
+    }
+  }
+}
+
+export enum RUN_DIRECTION {
+  LEFT = 'left',
+  RIGHT = 'right'
 }
