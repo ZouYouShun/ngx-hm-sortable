@@ -40,9 +40,11 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   @Input('center-mode') centerMode = false;
   @Input('autoplay-speed') speed = 5000;
+  @Input('autoplay-direction') direction: DIRECTION = DIRECTION.RIGHT;
   @Input('between-delay') delay = 8000;
   @Input('show-num') showNum = 1;
   @Input('scroll-num') scrollNum = 1;
+  private _viewIndex = 0;
   @Input('current-index')
   set currentIndex(value) {
     this._viewIndex = value;
@@ -53,7 +55,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   get currentIndex() {
     return this._viewIndex;
   }
-
   private _autoplay = false;
   @Input('autoplay')
   set autoplay(value) {
@@ -73,7 +74,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   @Output('index-change') indexChanged = new EventEmitter();
 
-  private _viewIndex = 0;
   private rootElm;
   private containerElm;
   private itemsElm: Array<any>;
@@ -86,6 +86,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   private mourseOver: Observable<any>;
   private mourseLeave: Observable<any>;
+  private mostRightIndex = 0;
 
   private doNext: Observable<any>;
 
@@ -116,7 +117,8 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         Observable.interval(this.speed)
           .takeUntil(stopEvent)
           .map(() => {
-            this.currentIndex += this.scrollNum;
+            if (this.direction === DIRECTION.LEFT) this.currentIndex -= this.scrollNum;
+            else this.currentIndex += this.scrollNum;
           }));
 
     if (this.autoplay) {
@@ -129,6 +131,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     this.setViewWidth();
 
     this.hammer = this.bindHammer();
+    this.mostRightIndex = this.itemsElm.length - this.showNum;
 
     this.drawView(this.currentIndex);
   }
@@ -167,18 +170,32 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     (<HTMLAnchorElement>this.containerElm).classList.add('transition');
 
     if (this.autoplay) {
-      if (index < 0) {
-        this._viewIndex = this.itemsElm.length - 1;
-      }
-      if (index >= this.itemsElm.length) {
-        this._viewIndex = 0;
-      }
+      this.autoPlay(index);
     } else {
-      this._viewIndex = Math.max(0, Math.min(index, this.itemsElm.length - 1));
+      this._viewIndex = Math.max(0, Math.min(index, this.mostRightIndex));
     }
 
     this.setContainerOffsetX(-this.currentIndex * this.elmWidth);
     this.indexChanged.emit(this.currentIndex);
+  }
+
+  private autoPlay(index: any) {
+    switch (this.direction) {
+      case DIRECTION.LEFT:
+        if (index === -this.scrollNum) {
+          this._viewIndex = this.mostRightIndex;
+        } else if (index > this.mostRightIndex || index < 0) {
+          this._viewIndex = 0;
+        }
+        break;
+      case DIRECTION.RIGHT:
+        if (index === this.mostRightIndex + this.scrollNum) {
+          this._viewIndex = 0;
+        } else if (index < 0 || this._viewIndex >= this.mostRightIndex) {
+          this._viewIndex = this.mostRightIndex;
+        }
+        break;
+    }
   }
 
   private setViewWidth() {
@@ -242,9 +259,14 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private outOfBound(type) {
     switch (type) {
       case 'panleft':
-        return this.currentIndex === this.itemsElm.length - 1;
+        return this.currentIndex === this.mostRightIndex;
       case 'panright':
         return this.currentIndex === 0;
     }
   }
+}
+
+export enum DIRECTION {
+  LEFT = 'left',
+  RIGHT = 'right'
 }
