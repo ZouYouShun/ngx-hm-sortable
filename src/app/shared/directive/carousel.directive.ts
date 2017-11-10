@@ -8,15 +8,15 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
 
 import {
-    AfterViewInit,
-    Directive,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    Input,
-    NgZone,
-    OnDestroy,
-    Output,
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  NgZone,
+  OnDestroy,
+  Output,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -74,7 +74,7 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
   private hammer: HammerManager;
   private elmWidth = 0;
 
-  private _looping = false;
+  private isInContainer = false;
   private restart = new BehaviorSubject<any>(null);
   private onMove = new Subject<any>();
 
@@ -95,16 +95,28 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
   constructor(private _zone: NgZone, private parentChild: ElementRef) { }
 
   ngAfterViewInit() {
+    this.initVariable();
+    this.setViewWidth();
+    this.hammer = this.bindHammer();
+
+    this.drawView(this.currentIndex);
+  }
+
+  ngOnDestroy() {
+    this.hammer.destroy();
+    this.sub$.unsubscribe();
+  }
+
+  private initVariable() {
     this.rootElm = this.parentChild.nativeElement;
     this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
-    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover');
-    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave');
+    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover').map(() => this.isInContainer = true);
+    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave').map(() => this.isInContainer = false);
+    this.itemsElm = Array.from(this.containerElm.children);
+    this.mostRightIndex = this.itemsElm.length - this.showNum;
 
-    const startEvent = this.restart.asObservable().merge(this.mourseLeave);
-    const stopEvent = this.onMove.merge(this.mourseOver);
-    // const startEvent = this.restart.asObservable().merge(this.mourseLeave).map(() => console.log('restart'));
-    // const stopEvent = this.onMove.merge(this.mourseOver).map(() => console.log('stop'));
-
+    const startEvent = this.restart.asObservable().merge(this.mourseLeave); // .map(() => console.log('start'))
+    const stopEvent = this.onMove.merge(this.mourseOver); // .map(() => console.log('stop'))
     this.doNext = startEvent
       .debounceTime(Math.abs(this.delay - this.speed))
       .switchMap(e =>
@@ -118,21 +130,23 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
     if (this.autoplay) {
       this.sub$ = this.doNext.subscribe();
     }
-    // this.sub$.unsubscribe();
-    // this.sub$ = this.doNext.subscribe();
-
-    this.itemsElm = Array.from(this.containerElm.children);
-    this.setViewWidth();
-
-    this.hammer = this.bindHammer();
-    this.mostRightIndex = this.itemsElm.length - this.showNum;
-
-    this.drawView(this.currentIndex);
   }
 
-  ngOnDestroy() {
-    this.hammer.destroy();
-    this.sub$.unsubscribe();
+  private setViewWidth() {
+    this.containerElm.style.position = 'relative';
+    this.elmWidth = this.rootElm.clientWidth / this.showNum;
+    this.itemsElm.forEach((elm: HTMLAnchorElement) => {
+      elm.style.width = `${this.elmWidth}px`;
+      elm.classList.add('grab');
+    });
+
+    // for (let i = this.mostRightIndex; i < this.itemsElm.length; i++) {
+    //   const clem = this.itemsElm[i].cloneNode(true);
+    //   this.containerElm.insertBefore(clem, this.itemsElm[0]);
+    // }
+    // const addLength = this.itemsElm.length - this.mostRightIndex;
+
+    this.containerElm.style.width = `${this.elmWidth * (this.itemsElm.length)}px`;
   }
 
   private bindHammer() {
@@ -146,7 +160,9 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
           case 'swipeleft':
           case 'swiperight':
             this.handleSwipe(e);
-            this.restart.next(null);
+            if (!this.isInContainer) {
+              this.restart.next(null);
+            }
             break;
           case 'panleft':
           case 'panright':
@@ -158,16 +174,6 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
       });
     });
     return hm;
-  }
-
-  private setViewWidth() {
-    this.containerElm.style.position = 'relative';
-    this.elmWidth = this.rootElm.clientWidth / this.showNum;
-    this.itemsElm.forEach((elm: HTMLAnchorElement) => {
-      elm.style.width = `${this.elmWidth}px`;
-      elm.classList.add('grab');
-    });
-    this.containerElm.style.width = `${this.elmWidth * this.itemsElm.length}px`;
   }
 
   private drawView(index: number) {
@@ -206,11 +212,9 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
     (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
     switch (e.direction) {
       case Hammer.DIRECTION_LEFT:
-        this.direction = RUN_DIRECTION.RIGHT;
         this.currentIndex += this.scrollNum;
         break;
       case Hammer.DIRECTION_RIGHT:
-        this.direction = RUN_DIRECTION.LEFT;
         this.currentIndex -= this.scrollNum;
         break;
       default:
@@ -231,7 +235,9 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
         break;
       case 'panend':
       case 'pancancel':
-        this.restart.next(null);
+        if (!this.isInContainer) {
+          this.restart.next(null);
+        }
         (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
         if (this.infinite || Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
           if (e.deltaX > 0) {
