@@ -14,7 +14,7 @@ export class CarouselComponent {
   index = 0;
   direction = RUN_DIRECTION.RIGHT;
   disabled;
-  enable = false;
+  enable = true;
 
   avatars = [
     {

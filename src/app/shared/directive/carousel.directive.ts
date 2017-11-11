@@ -110,16 +110,25 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
   private initVariable() {
     this.rootElm = this.parentChild.nativeElement;
     this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
-    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover').map(() => this.isInContainer = true);
-    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave').map(() => this.isInContainer = false);
+    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover');
+      // .map(() => {
+      //   this.isInContainer = true;
+      //   console.log('over');
+      // });
+    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave');
+    // .map(() => {
+    //   this.isInContainer = false;
+    //   console.log('levae');
+    // });
     this.itemsElm = Array.from(this.containerElm.children);
+
     this.mostRightIndex = this.itemsElm.length - this.showNum;
 
-    const startEvent = this.restart.asObservable().merge(this.mourseLeave); // .map(() => console.log('start'))
-    const stopEvent = this.onMove.merge(this.mourseOver); // .map(() => console.log('stop'))
+    const startEvent = this.restart.merge(this.mourseLeave); // .map(() => console.log('start'));
+    const stopEvent = this.onMove.merge(this.mourseOver); // .map(() => console.log('stop'));
     this.doNext = startEvent
       .debounceTime(Math.abs(this.delay - this.speed))
-      .switchMap(e =>
+      .switchMap(() =>
         Observable.interval(this.speed)
           .takeUntil(stopEvent)
           .map(() => {
@@ -133,28 +142,24 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
   }
 
   private setViewWidth() {
+    this.containerElm.classList.add('grab');
     this.containerElm.style.position = 'relative';
     this.elmWidth = this.rootElm.clientWidth / this.showNum;
     this.itemsElm.forEach((elm: HTMLAnchorElement) => {
       elm.style.width = `${this.elmWidth}px`;
-      elm.classList.add('grab');
     });
 
-    // for (let i = this.mostRightIndex; i < this.itemsElm.length; i++) {
-    //   const clem = this.itemsElm[i].cloneNode(true);
-    //   this.containerElm.insertBefore(clem, this.itemsElm[0]);
-    // }
-    // const addLength = this.itemsElm.length - this.mostRightIndex;
+    this.containerElm.style.width = `${this.elmWidth * this.itemsElm.length}px`;
 
-    this.containerElm.style.width = `${this.elmWidth * (this.itemsElm.length)}px`;
+    this.drawView(this.currentIndex);
   }
 
   private bindHammer() {
     const hm = new Hammer(this.rootElm);
     hm.on('swipeleft swiperight panleft panright panend pancancel', e => {
       this._zone.runOutsideAngular(() => {
-        (<HTMLAnchorElement>this.containerElm).classList.remove('transition');
-        (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.add('grabbing');
+        this.containerElm.classList.remove('transition');
+        this.containerElm.classList.add('grabbing');
         this.onMove.next();
         switch (e.type) {
           case 'swipeleft':
@@ -209,7 +214,7 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
   }
 
   private handleSwipe(e: HammerInput) {
-    (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
+    this.containerElm.classList.remove('grabbing');
     switch (e.direction) {
       case Hammer.DIRECTION_LEFT:
         this.currentIndex += this.scrollNum;
@@ -238,7 +243,7 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
         if (!this.isInContainer) {
           this.restart.next(null);
         }
-        (<HTMLAnchorElement>this.itemsElm[this.currentIndex]).classList.remove('grabbing');
+        this.containerElm.classList.remove('grabbing');
         if (this.infinite || Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
           if (e.deltaX > 0) {
             this.currentIndex -= this.scrollNum;
