@@ -110,16 +110,16 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
   private initVariable() {
     this.rootElm = this.parentChild.nativeElement;
     this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
-    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover');
-      // .map(() => {
-      //   this.isInContainer = true;
-      //   console.log('over');
-      // });
-    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave');
-    // .map(() => {
-    //   this.isInContainer = false;
-    //   console.log('levae');
-    // });
+    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover')
+      .map(() => {
+        this.isInContainer = true;
+        // console.log('over');
+      });
+    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave')
+      .map(() => {
+        this.isInContainer = false;
+        // console.log('levae');
+      });
     this.itemsElm = Array.from(this.containerElm.children);
 
     this.mostRightIndex = this.itemsElm.length - this.showNum;

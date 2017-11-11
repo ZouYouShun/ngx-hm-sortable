@@ -9,13 +9,13 @@
   [infinite]="enable"
   [show-num]="3"
   [scroll-num]="1"
-  [autoplay-speed]="1000"
+  [autoplay-speed]="2000"
   [autoplay-direction]="direction"
   [between-delay]="3000">
   <ul class="pane-container"  >
     <li class="pane" *ngFor="let avatar of avatars" >
       {{avatar.name}}
-        <img [src]="avatar.image" [alt]="avatar.name" style="width:100px" >
+        <img [src]="avatar.image" [alt]="avatar.name" style="height:100%;width:100%" >
     </li>
   </ul>
 </div>
