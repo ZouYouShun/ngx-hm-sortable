@@ -11,7 +11,7 @@ const PANBOUNDARY = 0.25;
   encapsulation: ViewEncapsulation.None
 })
 export class CarouselComponent {
-  index = 1;
+  index = 0;
   direction = RUN_DIRECTION.RIGHT;
   disabled;
   enable = true;
