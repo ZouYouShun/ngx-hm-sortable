@@ -101,7 +101,6 @@ img {
   overflow-y: hidden; */
 
   /* 暫時不跑版用的css */
-  padding-bottom: 22px;
   margin-bottom: -17px;
 
   position: absolute;
@@ -111,6 +110,7 @@ img {
   flex-wrap: wrap;
   width: 100%;
   text-align: left;
+  padding: 0;
 }
 
 .pane-container .control_pane {
@@ -150,6 +150,9 @@ img {
     height: 90%;
     max-width: 95%;
   }
+  .pane-container .control_pane {
+    width: 7em;
+  }
 }
 
 @media screen and (max-width: 768px) and (orientation: landscape) {
@@ -160,6 +163,10 @@ img {
   .img-scroll .pane.size_straight img {
     height: 90%;
     max-width: 95%;
+  }
+
+  .pane-container .control_pane {
+    width: 4em;
   }
 }
 
