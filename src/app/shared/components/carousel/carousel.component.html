@@ -1,0 +1,14 @@
+<div #parentChild class="carousel">
+  <ng-content select="[carousel-items-container]"></ng-content>
+</div>
+
+<ng-content select="[carousel-prev]"></ng-content>
+<ng-content select="[carousel-next]"></ng-content>
+
+<ul style="list-style:none">
+  <li *ngFor="let dot of items;let i = index;" (click)="setIndex(i)">
+    <ng-container *ngTemplateOutlet="dotElm, context: { $implicit: i }"></ng-container>
+  </li>
+</ul>
+
+<div class="progress" #progressBar></div>

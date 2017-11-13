@@ -1,0 +1,32 @@
+.carousel {
+  height: 100%;
+  width: 100%;
+  // background-color: transparent;
+  background-color: black;
+  overflow: hidden;
+}
+
+.transition {
+  transition: left .4s ease-in-out;
+}
+
+.grab {
+  /* 抓抓抓 */
+  cursor: grab;
+}
+
+.grabbing {
+  /* 抓住抓住 */
+  cursor: grabbing;
+}
+
+.pointer {
+  /* 抓住抓住 */
+  cursor: pointer;
+}
+
+.progress{
+  width: 100%;
+  height: 20px;
+  background: blue;
+}
