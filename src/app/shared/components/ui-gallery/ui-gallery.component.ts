@@ -36,6 +36,96 @@ export class UiGalleryComponent {
       image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
       visible: false,
       loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
+    },
+    {
+      name: 'jenny',
+      image: 'http://semantic-ui.com/images/avatar/large/jenny.jpg',
+      visible: false,
+      loadding: true
     }
   ];
 
@@ -92,6 +182,23 @@ export class UiGalleryComponent {
       return;
     }
     this.allowSelected = true;
+  }
+
+
+  prev() {
+    if (this.currentAvatar === 0) {
+      this.currentAvatar = this.avatars.length - 1;
+      return;
+    }
+    this.currentAvatar--;
+  }
+
+  next() {
+    if (this.currentAvatar === this.avatars.length - 1) {
+      this.currentAvatar = 0;
+      return;
+    }
+    this.currentAvatar++;
   }
 
 }

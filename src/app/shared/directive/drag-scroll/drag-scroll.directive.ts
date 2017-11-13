@@ -138,7 +138,7 @@ export class DragScrollDirective implements OnDestroy, OnInit, OnChanges, DoChec
     private renderer: Renderer2
   ) {
     this.scrollbarWidth = `${this.getScrollbarWidth()}px`;
-    el.nativeElement.style.overflow = 'auto';
+    // el.nativeElement.style.overflow = 'auto';
     el.nativeElement.style.whiteSpace = 'noWrap';
 
     this.mouseDownListener = renderer.listen(el.nativeElement, 'mousedown', this.onMouseDownHandler);

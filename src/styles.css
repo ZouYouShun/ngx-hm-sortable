@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-
+/*
 img {
   pointer-events: none
 }
@@ -21,4 +21,11 @@ img {
 .pane {
   display: inline-block;
   text-align: center;
+} */
+
+
+body{
+  margin: 0;
 }
+
+@import '/assets/fonts/photo/style.css';

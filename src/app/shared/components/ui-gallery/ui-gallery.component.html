@@ -10,42 +10,46 @@
 </div>
 
 <div class="gallery" *ngIf="toggle">
-  <div class="content">
 
-    <carousel-container>
-      <ul carouse-items-container class="img-scroll">
-        <li class="pane"
-            carousel-item
-            *ngFor="let avatar of avatars; let idx=index"
-            (panmove)="allowSelected = false"
-            (click)="onSelected(idx)" >
-          <img height="200"
-               [src]="avatar.image"
-               [alt]="avatar.name"
-               [class.hidden]="avatar.loadding"
-               (load)="avatar.loadding = false" >
-          <span class="ui-spinner" *ngIf="avatar.loadding">
-              Loading...
-          </span>
-        </li>
-      </ul>
-      <!-- <button carouse-next></button> -->
-      <!-- <button carouse-prev></button> -->
-    </carousel-container>
-
-    <a class="close" style="right: 0px;" (click)="toggle = false">
-      <i class="fa fa-close"></i>
-    </a>
-    <a class="nav-left">
-      <i class="fa fa-angle-left" (click)="swipe(currentAvatar, SWIPE_ACTION.LEFT)"></i>
-    </a>
-    <a class="nav-right">
-      <i class="fa fa-angle-right" (click)="swipe(currentAvatar, SWIPE_ACTION.RIGHT)"></i>
-    </a>
+  <div class="lg-toolbar right">
+    <div class="display_fiex">
+      <span class="lg-icon icon-play3"></span>
+      <span class="lg-icon icon-enlarge"></span>
+      <span class="lg-icon icon-download3"></span>
+      <span class="lg-icon icon-cross" (click)="toggle = false"></span>
+    </div>
   </div>
 
-  <div>
-    <!-- <carousel-container
+  <div class="lg-toolbar prev">
+    <span class="lg-icon icon-arrow-left2" carouse-prev (click)="prev()"></span>
+  </div>
+
+  <div class="lg-toolbar next">
+    <span class="lg-icon icon-arrow-right2" carouse-next (click)="next()"></span>
+  </div>
+
+
+  <carousel-container>
+    <ul carouse-items-container class="img-scroll">
+      <li class="pane" carousel-item *ngFor="let avatar of avatars; let idx=index" (panmove)="allowSelected = false" (click)="onSelected(idx)">
+        <img [src]="avatar.image" [alt]="avatar.name" [class.hidden]="avatar.loadding" (load)="avatar.loadding = false">
+        <span class="ui-spinner" *ngIf="avatar.loadding">
+          Loading...
+        </span>
+      </li>
+    </ul>
+    <!-- <button carouse-next (click)="next()"></button>
+    <button carouse-prev (click)="prev()"></button> -->
+  </carousel-container>
+  <ul drag-scroll class="pane-container">
+    <li class="control_pane" *ngFor="let avatar of avatars">
+      <img [src]="avatar.image" [alt]="avatar.name" (load)="avatar.loadding = false">
+      <span class="ui-spinner" *ngIf="avatar.loadding">
+        Loading...
+      </span>
+    </li>
+  </ul>
+  <!-- <carousel-container
       [current-index]="0"
       [autoplay]="true"
       [show-num]="3"
@@ -70,15 +74,6 @@
         </li>
       </ul>
     </carousel-container> -->
-    <ul drag-scroll  class="pane-container">
-      <li class="pane" *ngFor="let avatar of avatars">
-        <img [src]="avatar.image" [alt]="avatar.name" style="width:200px" (load)="avatar.loadding = false">
-        <span class="ui-spinner" *ngIf="avatar.loadding">
-          Loading...
-        </span>
-      </li>
-    </ul>
-  </div>
 </div>
 
 <!-- (click)="swipe((idx !== 0) ? idx - 1 : 1 , (idx !== 0) ? SWIPE_ACTION.RIGHT : SWIPE_ACTION.LEFT)" -->

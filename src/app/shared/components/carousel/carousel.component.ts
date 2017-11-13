@@ -162,6 +162,11 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     this.elmWidth = this.rootElm.clientWidth / this.showNum;
     this.itemsElm.forEach((elm: HTMLAnchorElement, index) => {
       elm.style.width = `${this.elmWidth}px`;
+
+      elm.querySelector('img').addEventListener('load', () => {
+        const horizontal = elm.querySelector('img').clientWidth > elm.querySelector('img').clientHeight;
+        elm.classList.add(horizontal ? 'size_horizontal' : 'size_straight');
+      }, false);
     });
 
     this.containerElm.style.width = `${this.elmWidth * this.itemsElm.length}px`;
