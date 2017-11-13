@@ -21,6 +21,7 @@ import {
   ViewEncapsulation,
   ContentChild,
   ElementRef,
+  TemplateRef,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -42,9 +43,11 @@ const PANBOUNDARY = 0.25;
 })
 export class CarouselComponent implements AfterViewInit, OnDestroy {
   @ViewChild('parentChild') parentChild;
+  @ViewChild('progressBar') progressBar;
   @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
   @ContentChild(CarouselNextDirective, { read: ElementRef }) private btnNext: ElementRef;
   @ContentChild(CarouselPrevDirective, { read: ElementRef }) private btnPrev: ElementRef;
+  @ContentChild('carouselDot') private dotElm: TemplateRef<any>;
   // @Input('center-mode') centerMode = false;
   @Input('infinite') infinite = false;
 
@@ -91,7 +94,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   private isInContainer = false;
   private restart = new BehaviorSubject<any>(null);
-  private onMove = new Subject<any>();
+  private stopEvent = new Subject<any>();
 
   private mourseOver: Observable<any>;
   private mourseLeave: Observable<any>;
@@ -126,10 +129,10 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   private bindClick() {
     this._renderer.listen(this.btnNext.nativeElement, 'click', () => {
-      this.currentIndex++;
+      this.setIndex(this.currentIndex + 1);
     });
     this._renderer.listen(this.btnPrev.nativeElement, 'click', () => {
-      this.currentIndex--;
+      this.setIndex(this.currentIndex - 1);
     });
   }
 
@@ -157,8 +160,9 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
     this.mostRightIndex = this.itemsElm.length - this.showNum;
 
-    const startEvent = this.restart.merge(this.mourseLeave); // .map(() => console.log('start'));
-    const stopEvent = this.onMove.merge(this.mourseOver); // .map(() => console.log('stop'));
+
+    const startEvent = this.restart.merge(this.mourseLeave).map(() => console.log('start'));
+    const stopEvent = this.stopEvent.merge(this.mourseOver).map(() => console.log('stop'));
     this.doNext = startEvent
       .debounceTime(Math.abs(this.delay - this.speed))
       .switchMap(() =>
@@ -167,6 +171,16 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
           .map(() => {
             if (this.direction === RUN_DIRECTION.LEFT) this.currentIndex -= this.scrollNum;
             else this.currentIndex += this.scrollNum;
+
+            let width = 0;
+            const runProgress = setInterval(() => {
+              if (width >= 100) {
+                clearInterval(runProgress);
+              } else {
+                width += (100 / this.speed) * 10 * 2;
+                this.progressBar.nativeElement.style.width = `${width}%`;
+              }
+            }, 10 * 2);
           }));
 
     if (this.autoplay) {
@@ -194,7 +208,9 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
       this._zone.runOutsideAngular(() => {
         this.containerElm.classList.remove('transition');
         this.containerElm.classList.add('grabbing');
-        this.onMove.next();
+        if (this.autoplay) {
+          this.stopEvent.next();
+        }
         // console.log(e.type);
         switch (e.type) {
           case 'tap':
@@ -204,7 +220,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
           case 'swipeleft':
           case 'swiperight':
             this.handleSwipe(e);
-            if (!this.isInContainer) {
+            if (this.autoplay && !this.isInContainer) {
               this.restart.next(null);
             }
             break;
@@ -289,7 +305,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         if (this.preAction.includes('swipe')) {
           this.callClick();
         } else {
-          if (!this.isInContainer) {
+          if (this.autoplay && !this.isInContainer) {
             this.restart.next(null);
           }
           this.containerElm.classList.remove('grabbing');
@@ -305,6 +321,14 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         }
         break;
     }
+  }
+
+  setIndex(index: number) {
+    if (this.autoplay) {
+      this.stopEvent.next();
+      this.restart.next('do restart');
+    }
+    this.currentIndex = index;
   }
 
   private outOfBound(type) {

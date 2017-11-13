@@ -3,11 +3,11 @@
 
 <carousel-container
   [current-index]="index"
-  [autoplay]="false"
+  [autoplay]="enable"
   [infinite]="enable"
   [show-num]="1"
   [scroll-num]="1"
-  [autoplay-speed]="2000"
+  [autoplay-speed]="3000"
   [autoplay-direction]="direction"
   [between-delay]="3000">
   <ul carousel-items-container class="pane-container">
@@ -16,13 +16,14 @@
       (carousel-item-click)="cc(avatar)"
       *ngFor="let avatar of avatars">
       {{avatar.name}}
-      <img [src]="avatar.image" [alt]="avatar.name" style="height:100%;width:100%">
+      <img [src]="avatar.image" [alt]="avatar.name" style="height:100px;">
     </li>
   </ul>
   <button carousel-prev>prev</button>
   <button carousel-next>next</button>
-
-  <button carousel-dots>cool</button>
+  <ng-template #carouselDot let-number>
+      <button>cool</button>{{number}}
+  </ng-template>
 </carousel-container>
 
 
