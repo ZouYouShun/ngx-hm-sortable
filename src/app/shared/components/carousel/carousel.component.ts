@@ -1,37 +1,38 @@
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/bufferCount';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/bufferCount';
 
 import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  HostListener,
-  Input,
-  NgZone,
-  OnDestroy,
-  Output,
-  Renderer2,
-  ViewChild,
-  ViewEncapsulation,
-  ContentChild,
-  ElementRef,
-  TemplateRef,
+    AfterViewInit,
+    Component,
+    ContentChild,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    NgZone,
+    OnDestroy,
+    Output,
+    Renderer2,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation,
 } from '@angular/core';
+import { ContentChildren } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { ContentChildren } from '@angular/core';
+
 import { CarouselItemDirective } from '../../directive/carousel-item.directive';
-import { CarouselPrevDirective } from '../../directive/carousel-prev.directive';
 import { CarouselNextDirective } from '../../directive/carousel-next.directive';
+import { CarouselPrevDirective } from '../../directive/carousel-prev.directive';
 
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = 0.25;
