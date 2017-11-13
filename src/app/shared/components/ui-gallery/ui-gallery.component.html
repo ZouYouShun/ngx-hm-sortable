@@ -12,7 +12,7 @@
 <div class="gallery" *ngIf="toggle">
   <div class="content">
 
-    <carousel-container>
+    <carousel-container [current-index]="currentAvatar">
       <ul carouse-items-container class="img-scroll">
         <li class="pane"
             carousel-item
@@ -37,41 +37,16 @@
       <i class="fa fa-close"></i>
     </a>
     <a class="nav-left">
-      <i class="fa fa-angle-left" (click)="swipe(currentAvatar, SWIPE_ACTION.LEFT)"></i>
+      <i class="fa fa-angle-left" (click)="prev()"></i>
     </a>
     <a class="nav-right">
-      <i class="fa fa-angle-right" (click)="swipe(currentAvatar, SWIPE_ACTION.RIGHT)"></i>
+      <i class="fa fa-angle-right" (click)="next()"></i>
     </a>
   </div>
 
   <div>
-    <!-- <carousel-container
-      [current-index]="0"
-      [autoplay]="true"
-      [show-num]="3"
-      [scroll-num]="1"
-      [autoplay-speed]="1500"
-      [between-delay]="1000"
-      [center-mode]="true"
-    >
-      <ul class="img-scroll">
-        <li class="pane"
-            *ngFor="let avatar of avatars; let idx=index"
-            (panmove)="allowSelected = false"
-            (click)="onSelected(idx)" >
-          <img width="200"
-               [src]="avatar.image"
-               [alt]="avatar.name"
-               [class.hidden]="avatar.loadding"
-               (load)="avatar.loadding = false" >
-          <span class="ui-spinner" *ngIf="avatar.loadding">
-              Loading...
-          </span>
-        </li>
-      </ul>
-    </carousel-container> -->
-    <ul drag-scroll  class="pane-container">
-      <li class="pane" *ngFor="let avatar of avatars">
+    <ul drag-scroll  class="pane-container" style="text-align: left;">
+      <li class="pane" *ngFor="let avatar of avatars; let idx = index;" (click)="onSelected(idx)">
         <img [src]="avatar.image" [alt]="avatar.name" style="width:200px" (load)="avatar.loadding = false">
         <span class="ui-spinner" *ngIf="avatar.loadding">
           Loading...
@@ -80,5 +55,3 @@
     </ul>
   </div>
 </div>
-
-<!-- (click)="swipe((idx !== 0) ? idx - 1 : 1 , (idx !== 0) ? SWIPE_ACTION.RIGHT : SWIPE_ACTION.LEFT)" -->
