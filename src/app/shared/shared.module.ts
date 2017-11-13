@@ -7,6 +7,7 @@ import { CarouselComponent } from './components/carousel/carousel.component';
 import { UiTreeComponent } from './components/ui-tree/ui-tree.component';
 import { CarouselDirective } from './directive/carousel.directive';
 import { HmDirective } from './directive/sortable.directive';
+import { CarouselItemDirective } from './directive/carousel-item.directive';
 
 
 @NgModule({
@@ -19,13 +20,15 @@ import { HmDirective } from './directive/sortable.directive';
     HmDirective,
     CarouselDirective,
     CarouselComponent,
-    DragScrollDirective
+    DragScrollDirective,
+    CarouselItemDirective
   ],
   exports: [
     UiTreeComponent,
     CarouselDirective,
     CarouselComponent,
-    DragScrollDirective
+    DragScrollDirective,
+    CarouselItemDirective
   ]
 })
 export class SharedModule { }

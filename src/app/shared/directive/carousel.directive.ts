@@ -17,6 +17,7 @@ import {
   NgZone,
   OnDestroy,
   Output,
+  Renderer2,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -92,12 +93,21 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
     this.drawView(this.currentIndex);
   }
 
-  constructor(private _zone: NgZone, private parentChild: ElementRef) { }
+  constructor(
+    private _zone: NgZone,
+    private _parentChild: ElementRef,
+    private _renderer: Renderer2) { }
 
   ngAfterViewInit() {
     this.initVariable();
     this.setViewWidth();
     this.hammer = this.bindHammer();
+
+
+    this._renderer.listen(this.containerElm, 'click', (e) => {
+      console.log(1);
+      // e.stoppropagation();
+    });
 
     this.drawView(this.currentIndex);
   }
@@ -108,7 +118,7 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
   }
 
   private initVariable() {
-    this.rootElm = this.parentChild.nativeElement;
+    this.rootElm = this._parentChild.nativeElement;
     this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
     this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover')
       .map(() => {
