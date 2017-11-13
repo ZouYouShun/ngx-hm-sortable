@@ -4,7 +4,7 @@ import { Directive, EventEmitter, Output } from '@angular/core';
   selector: '[carousel-item]'
 })
 export class CarouselItemDirective {
-  @Output('carousel-item-clcik') clickEvent = new EventEmitter();
+  @Output('carousel-item-click') clickEvent = new EventEmitter();
 
   constructor() { }
 

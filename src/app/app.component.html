@@ -13,12 +13,15 @@
   <ul carouse-items-container class="pane-container">
     <li class="pane"
       carousel-item
-      (carousel-item-clcik)="cc(avatar)"
+      (carousel-item-click)="cc(avatar)"
       *ngFor="let avatar of avatars">
       {{avatar.name}}
       <img [src]="avatar.image" [alt]="avatar.name" style="height:100%;width:100%">
     </li>
   </ul>
+
+  <!-- <button carouse-next></button>
+  <button carouse-prev></button> -->
 </carousel-container>
 
 
