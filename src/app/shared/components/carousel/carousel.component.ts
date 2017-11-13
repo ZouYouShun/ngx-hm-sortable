@@ -19,6 +19,8 @@ import {
   Renderer2,
   ViewChild,
   ViewEncapsulation,
+  ContentChild,
+  ElementRef,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -26,6 +28,8 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { ContentChildren } from '@angular/core';
 import { CarouselItemDirective } from '../../directive/carousel-item.directive';
+import { CarouselPrevDirective } from '../../directive/carousel-prev.directive';
+import { CarouselNextDirective } from '../../directive/carousel-next.directive';
 
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = 0.25;
@@ -39,6 +43,8 @@ const PANBOUNDARY = 0.25;
 export class CarouselComponent implements AfterViewInit, OnDestroy {
   @ViewChild('parentChild') parentChild;
   @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
+  @ContentChild(CarouselNextDirective, { read: ElementRef }) private btnNext: ElementRef;
+  @ContentChild(CarouselPrevDirective, { read: ElementRef }) private btnPrev: ElementRef;
   // @Input('center-mode') centerMode = false;
   @Input('infinite') infinite = false;
 
@@ -111,10 +117,19 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     this.initVariable();
     this.setViewWidth();
     this.hammer = this.bindHammer();
-
     this.drawView(this.currentIndex);
 
-    // console.log(this.items);
+    this.bindClick();
+
+  }
+
+  private bindClick() {
+    this._renderer.listen(this.btnNext.nativeElement, 'click', () => {
+      this.currentIndex++;
+    });
+    this._renderer.listen(this.btnPrev.nativeElement, 'click', () => {
+      this.currentIndex--;
+    });
   }
 
   ngOnDestroy() {
