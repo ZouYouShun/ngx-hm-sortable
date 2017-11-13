@@ -51,4 +51,8 @@ export class CarouselComponent {
   cdirection() {
     this.direction = this.direction === RUN_DIRECTION.LEFT ? RUN_DIRECTION.RIGHT : RUN_DIRECTION.LEFT;
   }
+
+  cc() {
+    alert(1);
+  }
 }

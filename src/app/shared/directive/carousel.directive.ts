@@ -156,7 +156,8 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
 
   private bindHammer() {
     const hm = new Hammer(this.rootElm);
-    hm.on('swipeleft swiperight panleft panright panend pancancel', e => {
+    hm.on('swipeleft swiperight panleft panright panend pancancel', (e: HammerInput) => {
+      e.srcEvent.stopPropagation();
       this._zone.runOutsideAngular(() => {
         this.containerElm.classList.remove('transition');
         this.containerElm.classList.add('grabbing');
@@ -178,6 +179,12 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
         }
       });
     });
+    hm.on('hammer.input', function (ev) {
+      // allow nested touch events to no propagate, this may have other side affects but works for now.
+      // TODO: It is probably better to check the source element of the event and only apply the handle to the correct carousel
+      ev.srcEvent.stopPropagation();
+    });
+
     return hm;
   }
 

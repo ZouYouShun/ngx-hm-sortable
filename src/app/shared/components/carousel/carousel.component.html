@@ -13,7 +13,7 @@
   [autoplay-direction]="direction"
   [between-delay]="3000">
   <ul class="pane-container"  >
-    <li class="pane" *ngFor="let avatar of avatars" >
+    <li class="pane" *ngFor="let avatar of avatars" (click)="cc()">
       {{avatar.name}}
         <img [src]="avatar.image" [alt]="avatar.name" style="height:100%;width:100%" >
     </li>
