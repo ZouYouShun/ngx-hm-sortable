@@ -179,11 +179,6 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
         }
       });
     });
-    hm.on('hammer.input', function (ev) {
-      // allow nested touch events to no propagate, this may have other side affects but works for now.
-      // TODO: It is probably better to check the source element of the event and only apply the handle to the correct carousel
-      ev.srcEvent.stopPropagation();
-    });
 
     return hm;
   }
@@ -196,7 +191,7 @@ export class CarouselDirective implements AfterViewInit, OnDestroy {
     } else {
       this._viewIndex = Math.max(0, Math.min(index, this.mostRightIndex));
     }
-
+    // this.containerElm.style.transform = `translate3d(${-this.currentIndex * this.elmWidth}px, 0px, 0px)`;
     this.containerElm.style.left = `${-this.currentIndex * this.elmWidth}px`;
     this.indexChanged.emit(this.currentIndex);
   }

@@ -1,13 +1,19 @@
-
-<carousel-container></carousel-container>
+<carousel-container>
+  <ul carouse-items-container class="pane-container">
+    <li class="pane" *ngFor="let avatar of avatars">
+      {{avatar.name}}
+      <img [src]="avatar.image" [alt]="avatar.name" style="height:100%;width:100%">
+    </li>
+  </ul>
+</carousel-container>
 
 
 
 <!-- <button (click)="index=index+1">+1</button>
 <button (click)="index=index-1">-1</button>
 {{index}} -->
-<app-ui-tree
-  [nodes]="avatars"></app-ui-tree>
+<!-- <app-ui-tree
+  [nodes]="avatars"></app-ui-tree> -->
 
 <!-- <div style="overflow:hidden;width:80%">
   <div

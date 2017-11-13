@@ -1,3 +1,4 @@
+import {DragScrollDirective} from './directive/drag-scroll/drag-scroll.directive';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -18,11 +19,13 @@ import { HmDirective } from './directive/sortable.directive';
     HmDirective,
     CarouselDirective,
     CarouselComponent,
+    DragScrollDirective
   ],
   exports: [
     UiTreeComponent,
     CarouselDirective,
     CarouselComponent,
+    DragScrollDirective
   ]
 })
 export class SharedModule { }
