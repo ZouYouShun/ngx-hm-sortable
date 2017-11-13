@@ -102,6 +102,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private sub$: Subscription;
 
   private isClick = false;
+  private preAction;
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
@@ -134,7 +135,9 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.hammer.destroy();
-    this.sub$.unsubscribe();
+    if (this.autoplay) {
+      this.sub$.unsubscribe();
+    }
   }
 
   private initVariable() {
@@ -192,9 +195,10 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         this.containerElm.classList.remove('transition');
         this.containerElm.classList.add('grabbing');
         this.onMove.next();
+        // console.log(e.type);
         switch (e.type) {
           case 'tap':
-            this.isClick = true;
+            this.callClick();
             this.containerElm.classList.remove('grabbing');
             break;
           case 'swipeleft':
@@ -203,22 +207,24 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
             if (!this.isInContainer) {
               this.restart.next(null);
             }
-            this.isClick = false;
             break;
           case 'panleft':
           case 'panright':
           case 'panend':
           case 'pancancel':
             this.handlePan(e);
-            this.isClick = false;
             break;
         }
-        if (this.isClick)
-          Array.from(this.items)[this.currentIndex].clickEvent.emit('do click');
+        // remember prv action, to avoid stop then panend
+        this.preAction = e.type;
       });
     });
 
     return hm;
+  }
+
+  private callClick() {
+    Array.from(this.items)[this.currentIndex].clickEvent.emit('do click');
   }
 
   private drawView(index: number) {
@@ -280,19 +286,23 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         break;
       case 'panend':
       case 'pancancel':
-        if (!this.isInContainer) {
-          this.restart.next(null);
-        }
-        this.containerElm.classList.remove('grabbing');
-        if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
-          if (e.deltaX > 0) {
-            this.currentIndex -= this.scrollNum;
-          } else {
-            this.currentIndex += this.scrollNum;
+        if (this.preAction.includes('swipe')) {
+          this.callClick();
+        } else {
+          if (!this.isInContainer) {
+            this.restart.next(null);
           }
-          break;
+          this.containerElm.classList.remove('grabbing');
+          if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
+            if (e.deltaX > 0) {
+              this.currentIndex -= this.scrollNum;
+            } else {
+              this.currentIndex += this.scrollNum;
+            }
+            break;
+          }
+          this.drawView(this.currentIndex);
         }
-        this.drawView(this.currentIndex);
         break;
     }
   }

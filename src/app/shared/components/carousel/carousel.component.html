@@ -1,7 +1,12 @@
-<div #parentChild
-  class="carousel">
+<div #parentChild class="carousel">
   <ng-content select="[carousel-items-container]"></ng-content>
 </div>
 
 <ng-content select="[carousel-prev]"></ng-content>
 <ng-content select="[carousel-next]"></ng-content>
+
+<ul>
+  <li *ngFor="let dot of items">
+    <ng-content select="[carousel-dots]"></ng-content>
+  </li>
+</ul>
