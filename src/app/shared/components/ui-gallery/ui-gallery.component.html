@@ -29,7 +29,7 @@
   </div>
 
 
-  <carousel-container>
+  <carousel-container [current-index]="currentAvatar">
     <ul carouse-items-container class="img-scroll">
       <li class="pane" carousel-item *ngFor="let avatar of avatars; let idx=index" (panmove)="allowSelected = false" (click)="onSelected(idx)">
         <img [src]="avatar.image" [alt]="avatar.name" [class.hidden]="avatar.loadding" (load)="avatar.loadding = false">
@@ -41,14 +41,7 @@
     <!-- <button carouse-next (click)="next()"></button>
     <button carouse-prev (click)="prev()"></button> -->
   </carousel-container>
-  <ul drag-scroll class="pane-container">
-    <li class="control_pane" *ngFor="let avatar of avatars">
-      <img [src]="avatar.image" [alt]="avatar.name" (load)="avatar.loadding = false">
-      <span class="ui-spinner" *ngIf="avatar.loadding">
-        Loading...
-      </span>
-    </li>
-  </ul>
+
   <!-- <carousel-container
       [current-index]="0"
       [autoplay]="true"
@@ -74,4 +67,31 @@
         </li>
       </ul>
     </carousel-container> -->
+
+
+    <div style="    width: 100%;
+    height: 260px;
+    overflow: hidden;">
+    <ul
+      drag-scroll
+      class="pane-container">
+      <li class="control_pane" *ngFor="let avatar of avatars; let idx=index;" (click)="onSelected(idx)">
+        <img [src]="avatar.image" [alt]="avatar.name" (load)="avatar.loadding = false">
+        <span class="ui-spinner" *ngIf="avatar.loadding">
+          Loading...
+        </span>
+      </li>
+    </ul>
+
+    <!-- <ul drag-scroll  class="pane-container">
+      <li class="pane" *ngFor="let avatar of avatars">
+        {{avatar.name}}
+        <img [src]="avatar.image" [alt]="avatar.name" style="height:100%;width:100%">
+      </li>
+    </ul> -->
+
+    </div>
+
 </div>
+
+

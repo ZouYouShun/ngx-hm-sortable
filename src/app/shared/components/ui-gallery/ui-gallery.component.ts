@@ -146,25 +146,5 @@ export class UiGalleryComponent {
     }
     this.currentAvatar++;
   }
-<<<<<<< HEAD
 
-
-  prev() {
-    if (this.currentAvatar === 0) {
-      this.currentAvatar = this.avatars.length - 1;
-      return;
-    }
-    this.currentAvatar--;
-  }
-
-  next() {
-    if (this.currentAvatar === this.avatars.length - 1) {
-      this.currentAvatar = 0;
-      return;
-    }
-    this.currentAvatar++;
-  }
-
-=======
->>>>>>> 9724fb3d2b077c0c636ec299a01975f1c3effb5d
 }

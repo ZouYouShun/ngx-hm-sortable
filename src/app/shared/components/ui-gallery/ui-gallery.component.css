@@ -20,7 +20,7 @@ img {
   -ms-user-select: none;
   user-select: none;
   -webkit-user-drag: none;
-  text-align: center
+  text-align: center;
 }
 
 .gallery .grab {
@@ -50,17 +50,17 @@ img {
 }
 
 .right {
-  right: 0
+  right: 0;
 }
 
 .prev {
   top: 50%;
-  left: 2%
+  left: 2%;
 }
 
 .next {
   top: 50%;
-  right: 2%
+  right: 2%;
 }
 
 .lg-toolbar {
@@ -89,13 +89,28 @@ img {
 }
 
 .lg-toolbar .lg-icon:hover {
-  color: #FFF;
+  color: #fff;
 }
 
 .pane-container {
-  display: flex;
+   /* 有舜大神註解的css */
+  /* display: flex;
+  flex-direction: row;
+  align-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden; */
+
+  /* 暫時不跑版用的css */
+  padding-bottom: 22px;
+  margin-bottom: -17px;
+
   position: absolute;
+  overflow: auto;
   bottom: 0;
+  white-space: nowrap;
+  flex-wrap: wrap;
+  width: 100%;
+  text-align: left;
 }
 
 .pane-container .control_pane {
@@ -103,6 +118,7 @@ img {
   margin: 0 0.5em;
   border: 3px solid white;
   cursor: pointer;
+  display: inline-block;
 }
 
 .pane-container .control_pane:hover {
@@ -120,7 +136,7 @@ img {
   }
 }
 
-@media screen and (max-width: 768px) and ( orientation: portrait) {
+@media screen and (max-width: 768px) and (orientation: portrait) {
   .img-scroll .pane.size_horizontal {
     top: 30%;
   }
@@ -136,7 +152,7 @@ img {
   }
 }
 
-@media screen and (max-width: 768px) and ( orientation: landscape) {
+@media screen and (max-width: 768px) and (orientation: landscape) {
   .img-scroll .pane.size_horizontal img {
     width: 70%;
     max-height: 85%;
@@ -146,7 +162,6 @@ img {
     max-width: 95%;
   }
 }
-
 
 /* .gallery .content {
 }
@@ -170,7 +185,6 @@ img {
   -webkit-user-drag: none;
   border-style: none;
 } */
-
 
 /* .gallery .content .fa {
   display: inline-block;
