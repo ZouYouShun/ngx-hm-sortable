@@ -1,21 +1,5 @@
-<input type="checkbox" [(ngModel)]="enable">
-<button (click)="cdirection()">{{direction}}</button>
 
-<div
-  class="carousel"
-  hm-carousel
-  [current-index]="index"
-  [autoplay]="enable"
-  [infinite]="enable"
-  [show-num]="1"
-  [scroll-num]="1"
-  [autoplay-speed]="2000"
-  [autoplay-direction]="direction"
-  [between-delay]="3000">
-  <ul class="pane-container"  >
-    <li class="pane" *ngFor="let avatar of avatars" (click)="cc()">
-      {{avatar.name}}
-        <img [src]="avatar.image" [alt]="avatar.name" style="height:100%;width:100%" >
-    </li>
-  </ul>
+<div #parentChild
+  class="carousel">
+  <ng-content select="[carouse-items-container]"></ng-content>
 </div>

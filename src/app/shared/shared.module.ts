@@ -28,6 +28,7 @@ import { UiGalleryComponent } from './components/ui-gallery/ui-gallery.component
     CarouselDirective,
     CarouselComponent,
     UiGalleryComponent,
+    DragScrollDirective
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

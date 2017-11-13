@@ -13,8 +13,9 @@
   <div class="content">
 
     <carousel-container>
-      <ul class="img-scroll">
+      <ul carouse-items-container class="img-scroll">
         <li class="pane"
+            carousel-item
             *ngFor="let avatar of avatars; let idx=index"
             (panmove)="allowSelected = false"
             (click)="onSelected(idx)" >
@@ -28,6 +29,8 @@
           </span>
         </li>
       </ul>
+      <!-- <button carouse-next></button> -->
+      <!-- <button carouse-prev></button> -->
     </carousel-container>
 
     <a class="close" style="right: 0px;" (click)="toggle = false">
