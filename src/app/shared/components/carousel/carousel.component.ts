@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/bufferCount';
 
 import {
   AfterViewInit,
@@ -161,27 +162,23 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     this.mostRightIndex = this.itemsElm.length - this.showNum;
 
 
-    const startEvent = this.restart.merge(this.mourseLeave).map(() => console.log('start'));
-    const stopEvent = this.stopEvent.merge(this.mourseOver).map(() => console.log('stop'));
+    const startEvent = this.restart.merge(this.mourseLeave); // .map(() => console.log('start'))
+    const stopEvent = this.stopEvent.merge(this.mourseOver).map(() => {
+      // console.log('stop');
+      this.progressBar.nativeElement.style.width = `0%`;
+    });
+    // const debounceTime = this.delay < this.speed ? this.delay : this.delay - this.speed;
     this.doNext = startEvent
-      .debounceTime(Math.abs(this.delay - this.speed))
+      .debounceTime(this.delay)
       .switchMap(() =>
-        Observable.interval(this.speed)
-          .takeUntil(stopEvent)
-          .map(() => {
+        this.runProgress(20)
+          .do(() => {
+            // console.log('next');
             if (this.direction === RUN_DIRECTION.LEFT) this.currentIndex -= this.scrollNum;
             else this.currentIndex += this.scrollNum;
-
-            let width = 0;
-            const runProgress = setInterval(() => {
-              if (width >= 100) {
-                clearInterval(runProgress);
-              } else {
-                width += (100 / this.speed) * 10 * 2;
-                this.progressBar.nativeElement.style.width = `${width}%`;
-              }
-            }, 10 * 2);
-          }));
+          })
+          .takeUntil(stopEvent)
+      );
 
     if (this.autoplay) {
       this.sub$ = this.doNext.subscribe();
@@ -338,6 +335,20 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
       case 'panright':
         return this.currentIndex === 0;
     }
+  }
+
+  private runProgress(betweenTime): Observable<any> {
+    const howTimes = this.speed / betweenTime;
+    const everyIncrease = 100 / this.speed * betweenTime;
+    // console.log('progress');
+    return Observable.interval(betweenTime)
+      .map(t => {
+        // console.log(t % howTimes);
+        // const persent = ;
+        // console.log(persent);
+        this.progressBar.nativeElement.style.width = `${(t % howTimes) * everyIncrease}%`;
+      })
+      .bufferCount(Math.round(this.speed / betweenTime), 0);
   }
 }
 
