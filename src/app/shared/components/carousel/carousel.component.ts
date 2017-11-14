@@ -49,11 +49,11 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   @ViewChild('parentChild') parentChild;
   @ViewChild('progressBar') progressBar;
   @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
-  @ContentChild('carouselDot') private dotElm: TemplateRef<any>;
+  @ContentChild('carouselDot') dotElm: TemplateRef<any>;
   @ViewChild('prev') private btnPrev: ElementRef;
   @ViewChild('next') private btnNext: ElementRef;
-  @ContentChild(CarouselPrevDirective) private contentPrev: ElementRef;
-  @ContentChild(CarouselNextDirective) private contentNext: ElementRef;
+  @ContentChild(CarouselPrevDirective) contentPrev: ElementRef;
+  @ContentChild(CarouselNextDirective) contentNext: ElementRef;
 
   // @Input('center-mode') centerMode = false;
   @Input('progress') isProgress = false;
