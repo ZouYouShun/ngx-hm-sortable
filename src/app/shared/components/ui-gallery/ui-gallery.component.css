@@ -100,8 +100,6 @@ img {
   overflow-x: auto;
   overflow-y: hidden; */
 
-  /* 暫時不跑版用的css */
-  margin-bottom: -17px;
   position: absolute;
   overflow: auto;
   bottom: 0;
