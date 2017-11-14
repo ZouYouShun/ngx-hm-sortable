@@ -1,9 +1,44 @@
 .carousel {
   height: 100%;
-  width: 100%;
-  // background-color: transparent;
+  width: 100%; // background-color: transparent;
   background-color: black;
   overflow: hidden;
+  position: relative;
+  ul.indicators {
+    list-style: none;
+    bottom: 1.5em;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 2;
+    li {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      margin-left: 0.5em;
+      margin-right: 0.5em;
+    }
+  }
+  .direction {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    &.left {
+      left: 0;
+      z-index: 2;
+    }
+    &.right {
+      position: absolute;
+      right: 0;
+      z-index: 2;
+    }
+  }
 }
 
 .transition {
@@ -25,8 +60,10 @@
   cursor: pointer;
 }
 
-.progress{
+.progress {
   width: 0%;
-  height: 20px;
-  background: blue;
+  height: 5px;
+  background: rgb(216, 253, 92);
+  position: absolute;
+  top: 0;
 }

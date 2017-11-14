@@ -48,8 +48,10 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   @ViewChild('parentChild') parentChild;
   @ViewChild('progressBar') progressBar;
   @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
-  @ContentChild(CarouselNextDirective, { read: ElementRef }) private btnNext: ElementRef;
-  @ContentChild(CarouselPrevDirective, { read: ElementRef }) private btnPrev: ElementRef;
+  @ViewChild('prev') private btnNext: ElementRef;
+  @ViewChild('next') private btnPrev: ElementRef;
+  // @ContentChild(CarouselPrevDirective, { read: ElementRef }) private btnPrev: ElementRef;
+
   @ContentChild('carouselDot') private dotElm: TemplateRef<any>;
   // @Input('center-mode') centerMode = false;
   @Input('infinite') infinite = false;
@@ -73,6 +75,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private _autoplay = false;
   @Input('autoplay')
   set autoplay(value) {
+    this.progressBar.nativeElement.style.width = `0%`;
 
     if (this.itemsElm) {
       if (value) {
@@ -204,8 +207,10 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   }
 
   private bindHammer() {
-    const hm = new Hammer(this.rootElm);
-    hm.get('swipe').set({ threshold: 50 });
+    const hm = new Hammer(this.containerElm);
+    hm.get('swipe').set({ threshold: 50, direction: Hammer.DIRECTION_HORIZONTAL });
+    hm.get('pan').set({ threshold: 50, direction: Hammer.DIRECTION_HORIZONTAL });
+
     hm.on('swipeleft swiperight panleft panright panend pancancel tap', (e: HammerInput) => {
       this._zone.runOutsideAngular(() => {
         this.containerElm.classList.remove('transition');
@@ -310,7 +315,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
           if (this.autoplay && !this.isInContainer) {
             this.restart.next(null);
           }
-          this.containerElm.classList.remove('grabbing');
           if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
             if (e.deltaX > 0) {
               this.currentIndex -= this.scrollNum;
@@ -321,6 +325,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
           }
           this.drawView(this.currentIndex);
         }
+        this.containerElm.classList.remove('grabbing');
         break;
     }
   }

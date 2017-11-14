@@ -82,12 +82,12 @@ export class HmDirective implements AfterViewInit, OnDestroy {
 
   private bindHammer(elms) {
     return Array.from(elms).map((el: HTMLElement, index: number) => {
-      const mc = new Hammer(el);
+      const hm = new Hammer(el);
       // let the pan gesture support all directions.
       // this will block the vertical scrolling on a touch-device while on the element
-      mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+      hm.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
-      mc.on('panstart', (event: any) => {
+      hm.on('panstart', (event: any) => {
         event.preventDefault();
         this.selectIndex = this.nowIndex = +event.target.parentNode.attributes.index.value;
         // set choiceNode to this start tag
@@ -111,7 +111,7 @@ export class HmDirective implements AfterViewInit, OnDestroy {
         Object.assign(this.selectNode.style, this.selectStyle);
       });
 
-      mc.on('panmove', (event) => {
+      hm.on('panmove', (event) => {
         event.preventDefault();
 
         Object.assign(this.sort_clone_obj.style, {
@@ -143,7 +143,7 @@ export class HmDirective implements AfterViewInit, OnDestroy {
         });
       });
 
-      mc.on('panend', (event) => {
+      hm.on('panend', (event) => {
         this.selectNode.style.pointerEvents = '';
         removeElement(this.sort_clone_obj);
         Object.assign(this.elms[this.selectIndex].style, this.storeStyle);
@@ -167,7 +167,7 @@ export class HmDirective implements AfterViewInit, OnDestroy {
         this.nowIndex = undefined;
         this.priAction = undefined;
       });
-      return mc;
+      return hm;
     });
   }
 

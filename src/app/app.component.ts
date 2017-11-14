@@ -18,26 +18,26 @@ export class AppComponent implements OnInit {
   avatars = [
 
     {
-      name: '2',
+      name: '1',
       image: 'assets/img/slide01.jpg',
       visible: false
     },
     {
-      name: '3',
+      name: '2',
       image: 'assets/img/slide02.jpg',
       visible: false
     }, {
-      name: '4',
+      name: '3',
       image: 'assets/img/slide03.jpg',
       visible: false
     },
     {
-      name: '5',
+      name: '4',
       image: 'assets/img/slide04.jpg',
       visible: false
     },
     {
-      name: '6',
+      name: '5',
       image: 'assets/img/slide05.jpg',
       visible: false
     },

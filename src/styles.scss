@@ -7,7 +7,6 @@ img {
 .pane-container {
   height: 100%;
   width: 100%;
-  background-color: rgb(255, 157, 44);
   margin: 0;
   padding: 0;
   position: relative;
@@ -20,7 +19,7 @@ img {
 
 .pane {
   display: inline-flex;
-  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 500px;
   background-attachment: scroll;
@@ -38,4 +37,21 @@ img {
   h2 {
     font-size: 7rem
   }
+}
+
+.ball {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background: rgba(255, 255, 255, 0.35);
+  &.visible {
+    background: white;
+  }
+}
+
+.direction {
+  color: white;
+  padding-left: 1em;
+  padding-right: 1em;
+  cursor: pointer;
 }

@@ -1,7 +1,7 @@
 
 <carousel-container
   [current-index]="index"
-  [autoplay]="false"
+  [autoplay]="enable"
   [infinite]="enable"
   [show-num]="1"
   [scroll-num]="1"
@@ -21,18 +21,137 @@
       <div class="inner">
         <header>
           <p>gogogo</p>
-          <h2>Hielo</h2>
+          <h2>{{avatar.name}}</h2>
           <p>gogogo</p>
         </header>
       </div>
     </article>
   </section>
-  <button carousel-prev>prev</button>
-  <button carousel-next>next</button>
-  <ng-template #carouselDot let-number>
-      <button>cool</button>{{number}}
+  <i carousel-prev class="material-icons" style="font-size:50px;">keyboard_arrow_left</i>
+  <i carousel-next class="material-icons" style="font-size:50px;">keyboard_arrow_right</i>
+  <ng-template #carouselDot let-model>
+      <!-- <button>cool</button>{{number}} -->
+      <div class="ball"
+        [class.visible]="model.index === model.currentIndex"></div>
   </ng-template>
 </carousel-container>
 
 <input type="checkbox" [(ngModel)]="enable">
 <button (click)="cdirection()">{{direction}}</button>
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
