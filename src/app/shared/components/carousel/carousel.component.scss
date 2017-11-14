@@ -6,7 +6,7 @@
   position: relative;
   ul.indicators {
     list-style: none;
-    bottom: 1.5em;
+    bottom: 1em;
     left: 0;
     margin: 0;
     padding: 0;
@@ -18,8 +18,7 @@
       cursor: pointer;
       display: inline-block;
       position: relative;
-      margin-left: 0.5em;
-      margin-right: 0.5em;
+      padding: 0.5em;
     }
   }
   .direction {

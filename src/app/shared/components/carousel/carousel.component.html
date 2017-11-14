@@ -10,7 +10,7 @@
   <!-- indicators -->
   <ul class="indicators">
     <li
-      *ngFor="let dot of items;let i = index;"
+      *ngFor="let dot of dots; let i = index;"
       (click)="setIndex(i)">
       <ng-container
         *ngTemplateOutlet="dotElm, context: {

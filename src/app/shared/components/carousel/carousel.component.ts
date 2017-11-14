@@ -9,6 +9,7 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
 
 import {
+  AfterContentInit,
   AfterViewInit,
   Component,
   ContentChild,
@@ -44,7 +45,7 @@ const PANBOUNDARY = 0.25;
   styleUrls: ['./carousel.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class CarouselComponent implements AfterViewInit, OnDestroy {
+export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('parentChild') parentChild;
   @ViewChild('progressBar') progressBar;
   @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
@@ -55,7 +56,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   @ContentChild('carouselDot') private dotElm: TemplateRef<any>;
   // @Input('center-mode') centerMode = false;
   @Input('infinite') infinite = false;
-
+  @Input('mourse-enable') mourseEnable = false;
   @Input('autoplay-speed') speed = 5000;
   @Input('between-delay') delay = 8000;
   @Input('autoplay-direction') direction: RUN_DIRECTION = RUN_DIRECTION.RIGHT;
@@ -102,8 +103,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private restart = new BehaviorSubject<any>(null);
   private stopEvent = new Subject<any>();
 
-  private mourseOver: Observable<any>;
-  private mourseLeave: Observable<any>;
   private mostRightIndex = 0;
 
   private doNext: Observable<any>;
@@ -112,6 +111,7 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   private isClick = false;
   private preAction;
+  public dots;
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
@@ -123,13 +123,14 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     private _zone: NgZone,
     private _renderer: Renderer2) { }
 
-  ngAfterViewInit() {
+  ngAfterContentInit(): void {
     this.initVariable();
-    this.setViewWidth(true);
+  }
 
+  ngAfterViewInit() {
+    this.setViewWidth(true);
     this.hammer = this.bindHammer();
     this.drawView(this.currentIndex);
-
     this.bindClick();
   }
 
@@ -152,26 +153,26 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   private initVariable() {
     this.rootElm = this.parentChild.nativeElement;
     this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
-    this.mourseOver = Observable.fromEvent(this.containerElm, 'mouseover')
-      .map(() => {
-        this.isInContainer = true;
-        // console.log('over');
-      });
-    this.mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave')
-      .map(() => {
-        this.isInContainer = false;
-        // console.log('levae');
-      });
     this.itemsElm = Array.from(this.containerElm.children);
-
     this.mostRightIndex = this.itemsElm.length - this.showNum;
+    this.dots = new Array(this.itemsElm.length - (this.showNum - 1)).map((x, i) => i);
 
-
-    const startEvent = this.restart.merge(this.mourseLeave); // .map(() => console.log('start'))
-    const stopEvent = this.stopEvent.merge(this.mourseOver).map(() => {
-      // console.log('stop');
-      this.progressBar.nativeElement.style.width = `0%`;
-    });
+    let startEvent: any = this.restart; // .merge(this.mourseLeave); // .map(() => console.log('start'))
+    let stopEvent: any = this.stopEvent;
+    if (this.mourseEnable) {
+      const mourseOver = Observable.fromEvent(this.containerElm, 'mouseover')
+        .map(() => {
+          this.isInContainer = true;
+          // console.log('over');
+        });
+      const mourseLeave = Observable.fromEvent(this.containerElm, 'mouseleave')
+        .map(() => {
+          this.isInContainer = false;
+          // console.log('levae');
+        });
+      startEvent = startEvent.merge(mourseLeave);
+      stopEvent = stopEvent.merge(mourseOver);
+    }
     // const debounceTime = this.delay < this.speed ? this.delay : this.delay - this.speed;
     this.doNext = startEvent
       .debounceTime(this.delay)
@@ -182,7 +183,10 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
             if (this.direction === RUN_DIRECTION.LEFT) this.currentIndex -= this.scrollNum;
             else this.currentIndex += this.scrollNum;
           })
-          .takeUntil(stopEvent)
+          .takeUntil(stopEvent.map(() => {
+            // console.log('stop');
+            this.progressBar.nativeElement.style.width = `0%`;
+          }))
       );
 
     if (this.autoplay) {
@@ -202,8 +206,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     });
 
     this.containerElm.style.width = `${this.elmWidth * this.itemsElm.length}px`;
-
-    this.drawView(this.currentIndex);
   }
 
   private bindHammer() {
@@ -218,23 +220,24 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         if (this.autoplay) {
           this.stopEvent.next();
         }
-        // console.log(e.type);
         switch (e.type) {
           case 'tap':
-            this.callClick();
+            this.callClick(e.center.x);
+            this.callRestart();
             this.containerElm.classList.remove('grabbing');
             break;
           case 'swipeleft':
           case 'swiperight':
             this.handleSwipe(e);
-            if (this.autoplay && !this.isInContainer) {
-              this.restart.next(null);
-            }
+            this.callRestart();
+            this.containerElm.classList.remove('grabbing');
             break;
-          case 'panleft':
-          case 'panright':
           case 'panend':
           case 'pancancel':
+            this.containerElm.classList.remove('grabbing');
+          // tslint:disable-next-line:no-switch-case-fall-through
+          case 'panleft':
+          case 'panright':
             this.handlePan(e);
             break;
         }
@@ -246,8 +249,15 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     return hm;
   }
 
-  private callClick() {
-    Array.from(this.items)[this.currentIndex].clickEvent.emit('do click');
+  private callRestart() {
+    if (this.autoplay && !this.isInContainer) {
+      this.restart.next(null);
+    }
+  }
+
+  private callClick(positionX) {
+    const cIndex = Math.floor(positionX / this.elmWidth);
+    Array.from(this.items)[this.currentIndex + cIndex].clickEvent.emit('do click');
   }
 
   private drawView(index: number) {
@@ -283,7 +293,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   }
 
   private handleSwipe(e: HammerInput) {
-    this.containerElm.classList.remove('grabbing');
     switch (e.direction) {
       case Hammer.DIRECTION_LEFT:
         this.currentIndex += this.scrollNum;
@@ -298,6 +307,9 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
   }
 
   private handlePan(e: HammerInput) {
+    // console.log(e.deltaX / this.elmWidth);
+    // const moveNum = Math.ceil(e.deltaX / this.elmWidth);
+    // console.log(moveNum);
     switch (e.type) {
       case 'panleft':
       case 'panright':
@@ -309,12 +321,10 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
         break;
       case 'panend':
       case 'pancancel':
+        this.callRestart();
         if (this.preAction.includes('swipe')) {
-          this.callClick();
+          this.callClick(e.center.x);
         } else {
-          if (this.autoplay && !this.isInContainer) {
-            this.restart.next(null);
-          }
           if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
             if (e.deltaX > 0) {
               this.currentIndex -= this.scrollNum;
@@ -325,7 +335,6 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
           }
           this.drawView(this.currentIndex);
         }
-        this.containerElm.classList.remove('grabbing');
         break;
     }
   }
