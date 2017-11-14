@@ -1,24 +1,32 @@
-<input type="checkbox" [(ngModel)]="enable">
-<button (click)="cdirection()">{{direction}}</button>
 
 <carousel-container
   [current-index]="index"
-  [autoplay]="enable"
+  [autoplay]="false"
   [infinite]="enable"
   [show-num]="1"
   [scroll-num]="1"
-  [autoplay-speed]="1000"
+  [autoplay-speed]="3000"
   [autoplay-direction]="direction"
   [between-delay]="2000">
-  <ul carousel-items-container class="pane-container">
-    <li class="pane"
+  <section
+    carousel-items-container
+    class="pane-container">
+    <article class="pane"
       carousel-item
       (carousel-item-click)="cc(avatar)"
+      [style.backgroundImage]="avatar.image | safe:'background-image' "
       *ngFor="let avatar of avatars">
-      {{avatar.name}}
-      <img [src]="avatar.image" [alt]="avatar.name" style="height:100px;">
-    </li>
-  </ul>
+      <!-- {{avatar.name}}
+      <img [src]="avatar.image" [alt]="avatar.name" style="height:100px;"> -->
+      <div class="inner">
+        <header>
+          <p>gogogo</p>
+          <h2>Hielo</h2>
+          <p>gogogo</p>
+        </header>
+      </div>
+    </article>
+  </section>
   <button carousel-prev>prev</button>
   <button carousel-next>next</button>
   <ng-template #carouselDot let-number>
@@ -26,36 +34,5 @@
   </ng-template>
 </carousel-container>
 
-
-
-<!-- <button (click)="index=index+1">+1</button>
-<button (click)="index=index-1">-1</button>
-{{index}} -->
-<!-- <app-ui-tree
-  [nodes]="avatars"></app-ui-tree> -->
-
-<!-- <div style="overflow:hidden;width:80%">
-  <div
-    hm-carousel
-    class="ui card swipe-box"
-    style="width:500000px">
-      <img
-        [src]="avatar.image"
-        class="image"
-        *ngFor="let avatar of avatars; let idx=index">
-  </div>
-</div>
-
-<div
-  class="demo-one"
-  drag-scroll
-  drag-scroll-y-disabled="true"
-  scrollbar-hidden="true"
-  (reachesLeftBound)="leftBoundStat($event)"
-  (reachesRightBound)="rightBoundStat($event)"
-  #nav
-  >
-  <img
-    *ngFor="let avatar of avatars; let idx=index"
-    [src]="avatar.image" />
-</div> -->
+<input type="checkbox" [(ngModel)]="enable">
+<button (click)="cdirection()">{{direction}}</button>

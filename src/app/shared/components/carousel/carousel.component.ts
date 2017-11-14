@@ -9,20 +9,20 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
 
 import {
-    AfterViewInit,
-    Component,
-    ContentChild,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    Input,
-    NgZone,
-    OnDestroy,
-    Output,
-    Renderer2,
-    TemplateRef,
-    ViewChild,
-    ViewEncapsulation,
+  AfterViewInit,
+  Component,
+  ContentChild,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  NgZone,
+  OnDestroy,
+  Output,
+  Renderer2,
+  TemplateRef,
+  ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { ContentChildren } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -33,6 +33,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { CarouselItemDirective } from '../../directive/carousel-item.directive';
 import { CarouselNextDirective } from '../../directive/carousel-next.directive';
 import { CarouselPrevDirective } from '../../directive/carousel-prev.directive';
+import { getScrollbarWidth } from '../../ts/getScrollBarHeight';
 
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = 0.25;
@@ -121,12 +122,12 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.initVariable();
-    this.setViewWidth();
+    this.setViewWidth(true);
+
     this.hammer = this.bindHammer();
     this.drawView(this.currentIndex);
 
     this.bindClick();
-
   }
 
   private bindClick() {
@@ -186,10 +187,13 @@ export class CarouselComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private setViewWidth() {
+  private setViewWidth(isInit?: boolean) {
     this.containerElm.classList.add('grab');
-    this.containerElm.style.position = 'relative';
     this.elmWidth = this.rootElm.clientWidth / this.showNum;
+    // when init check view has scroll bar
+    if (isInit && this.containerElm.scrollHeight > 0) this.elmWidth += getScrollbarWidth();
+
+    this.containerElm.style.position = 'relative';
     this.itemsElm.forEach((elm: HTMLAnchorElement, index) => {
       elm.style.width = `${this.elmWidth}px`;
     });

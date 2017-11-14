@@ -16,33 +16,29 @@ export class AppComponent implements OnInit {
   enable = true;
 
   avatars = [
-    {
-      name: '1',
-      image: 'https://semantic-ui.com/images/avatar2/large/matthew.png',
-      visible: false
-    },
+
     {
       name: '2',
-      image: 'https://semantic-ui.com/images/avatar/large/chris.jpg',
+      image: 'assets/img/slide01.jpg',
       visible: false
     },
     {
       name: '3',
-      image: 'https://semantic-ui.com/images/avatar/large/jenny.jpg',
+      image: 'assets/img/slide02.jpg',
       visible: false
     }, {
       name: '4',
-      image: 'https://semantic-ui.com/images/avatar2/large/matthew.png',
+      image: 'assets/img/slide03.jpg',
       visible: false
     },
     {
       name: '5',
-      image: 'https://semantic-ui.com/images/avatar/large/chris.jpg',
+      image: 'assets/img/slide04.jpg',
       visible: false
     },
     {
       name: '6',
-      image: 'https://semantic-ui.com/images/avatar/large/jenny.jpg',
+      image: 'assets/img/slide05.jpg',
       visible: false
     },
   ];

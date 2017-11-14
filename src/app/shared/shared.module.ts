@@ -10,6 +10,7 @@ import { CarouselPrevDirective } from './directive/carousel-prev.directive';
 import { CarouselDirective } from './directive/carousel.directive';
 import { DragScrollDirective } from './directive/drag-scroll/drag-scroll.directive';
 import { HmDirective } from './directive/sortable.directive';
+import { SafePipe } from './pipes/safe.pipe';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { HmDirective } from './directive/sortable.directive';
     DragScrollDirective,
     CarouselItemDirective,
     CarouselPrevDirective,
-    CarouselNextDirective
+    CarouselNextDirective,
+    SafePipe
   ],
   exports: [
     UiTreeComponent,
@@ -34,7 +36,8 @@ import { HmDirective } from './directive/sortable.directive';
     DragScrollDirective,
     CarouselItemDirective,
     CarouselPrevDirective,
-    CarouselNextDirective
+    CarouselNextDirective,
+    SafePipe
   ]
 })
 export class SharedModule { }
