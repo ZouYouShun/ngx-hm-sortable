@@ -37,7 +37,7 @@ import { CarouselPrevDirective } from '../../directive/carousel-prev.directive';
 import { getScrollbarWidth } from '../../ts/getScrollBarHeight';
 
 // if the pane is paned .25, switch to the next pane.
-const PANBOUNDARY = 0.25;
+const PANBOUNDARY = 0.15;
 
 @Component({
   selector: 'carousel-container',
@@ -49,12 +49,14 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   @ViewChild('parentChild') parentChild;
   @ViewChild('progressBar') progressBar;
   @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
-  @ViewChild('prev') private btnNext: ElementRef;
-  @ViewChild('next') private btnPrev: ElementRef;
-  // @ContentChild(CarouselPrevDirective, { read: ElementRef }) private btnPrev: ElementRef;
-
   @ContentChild('carouselDot') private dotElm: TemplateRef<any>;
+  @ViewChild('prev') private btnPrev: ElementRef;
+  @ViewChild('next') private btnNext: ElementRef;
+  @ContentChild(CarouselPrevDirective) private contentPrev: ElementRef;
+  @ContentChild(CarouselNextDirective) private contentNext: ElementRef;
+
   // @Input('center-mode') centerMode = false;
+  @Input('progress') isProgress = false;
   @Input('infinite') infinite = false;
   @Input('mourse-enable') mourseEnable = false;
   @Input('autoplay-speed') speed = 5000;
@@ -62,6 +64,7 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   @Input('autoplay-direction') direction: RUN_DIRECTION = RUN_DIRECTION.RIGHT;
   @Input('show-num') showNum = 1;
   @Input('scroll-num') scrollNum = 1;
+  @Input('drag-many') isDragMany = false;
   private _viewIndex = 0;
   @Input('current-index')
   set currentIndex(value) {
@@ -76,9 +79,8 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   private _autoplay = false;
   @Input('autoplay')
   set autoplay(value) {
-    this.progressBar.nativeElement.style.width = `0%`;
-
     if (this.itemsElm) {
+      if (this.isProgress) this.progressBar.nativeElement.style.width = `0%`;
       if (value) {
         this.sub$ = this.doNext.subscribe();
       } else {
@@ -106,12 +108,10 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   private mostRightIndex = 0;
 
   private doNext: Observable<any>;
-
   private sub$: Subscription;
 
-  private isClick = false;
-  private preAction;
-  public dots;
+  private prePanMove: boolean;
+  public dots: Array<number>;
 
   @HostListener('window:resize', ['$event'])
   private onResize(event) {
@@ -185,7 +185,7 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
           })
           .takeUntil(stopEvent.map(() => {
             // console.log('stop');
-            this.progressBar.nativeElement.style.width = `0%`;
+            if (this.isProgress) this.progressBar.nativeElement.style.width = `0%`;
           }))
       );
 
@@ -196,9 +196,13 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
 
   private setViewWidth(isInit?: boolean) {
     this.containerElm.classList.add('grab');
-    this.elmWidth = this.rootElm.clientWidth / this.showNum;
     // when init check view has scroll bar
-    if (isInit && this.containerElm.scrollHeight > 0) this.elmWidth += getScrollbarWidth();
+    let totalWidth = 0;
+    if (isInit && this.containerElm.scrollHeight > 0) {
+      totalWidth += getScrollbarWidth();
+    }
+
+    this.elmWidth = (totalWidth + this.rootElm.clientWidth) / this.showNum;
 
     this.containerElm.style.position = 'relative';
     this.itemsElm.forEach((elm: HTMLAnchorElement, index) => {
@@ -210,10 +214,9 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
 
   private bindHammer() {
     const hm = new Hammer(this.containerElm);
-    hm.get('swipe').set({ threshold: 50, direction: Hammer.DIRECTION_HORIZONTAL });
     hm.get('pan').set({ threshold: 50, direction: Hammer.DIRECTION_HORIZONTAL });
 
-    hm.on('swipeleft swiperight panleft panright panend pancancel tap', (e: HammerInput) => {
+    hm.on('panleft panright panend pancancel tap', (e: HammerInput) => {
       this._zone.runOutsideAngular(() => {
         this.containerElm.classList.remove('transition');
         this.containerElm.classList.add('grabbing');
@@ -226,12 +229,6 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
             this.callRestart();
             this.containerElm.classList.remove('grabbing');
             break;
-          case 'swipeleft':
-          case 'swiperight':
-            this.handleSwipe(e);
-            this.callRestart();
-            this.containerElm.classList.remove('grabbing');
-            break;
           case 'panend':
           case 'pancancel':
             this.containerElm.classList.remove('grabbing');
@@ -241,8 +238,7 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
             this.handlePan(e);
             break;
         }
-        // remember prv action, to avoid stop then panend
-        this.preAction = e.type;
+
       });
     });
 
@@ -292,23 +288,8 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
     }
   }
 
-  private handleSwipe(e: HammerInput) {
-    switch (e.direction) {
-      case Hammer.DIRECTION_LEFT:
-        this.currentIndex += this.scrollNum;
-        break;
-      case Hammer.DIRECTION_RIGHT:
-        this.currentIndex -= this.scrollNum;
-        break;
-      default:
-        this.drawView(this.currentIndex);
-    }
-    this.hammer.stop(true);
-  }
-
   private handlePan(e: HammerInput) {
     // console.log(e.deltaX / this.elmWidth);
-    // const moveNum = Math.ceil(e.deltaX / this.elmWidth);
     // console.log(moveNum);
     switch (e.type) {
       case 'panleft':
@@ -318,23 +299,43 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
           e.deltaX *= 0.5;
         }
         this.containerElm.style.left = `${-this.currentIndex * this.elmWidth + e.deltaX}px`;
-        break;
-      case 'panend':
-      case 'pancancel':
-        this.callRestart();
-        if (this.preAction.includes('swipe')) {
-          this.callClick(e.center.x);
-        } else {
-          if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
+
+        this.prePanMove = false;
+        if (!this.isDragMany) {
+          if (Math.abs(e.deltaX) > this.elmWidth * 0.5) {
             if (e.deltaX > 0) {
               this.currentIndex -= this.scrollNum;
             } else {
               this.currentIndex += this.scrollNum;
             }
-            break;
+            this.containerElm.classList.remove('grabbing');
+            this.callRestart();
+            this.hammer.stop(true);
+            // remember prv action, to avoid hammer stop, then click
+            this.prePanMove = true;
           }
-          this.drawView(this.currentIndex);
         }
+        break;
+      case 'panend':
+      case 'pancancel':
+        this.callRestart();
+
+        if (Math.abs(e.deltaX) > this.elmWidth * PANBOUNDARY) {
+          const moveNum = this.isDragMany ?
+            Math.ceil(Math.abs(e.deltaX) / this.elmWidth) : this.scrollNum;
+          if (e.deltaX > 0) {
+            this.currentIndex -= moveNum;
+          } else {
+            this.currentIndex += moveNum;
+          }
+          break;
+        } else {
+          if (!this.isDragMany && this.prePanMove) {
+            this.callClick(e.center.x);
+          }
+        }
+        this.drawView(this.currentIndex);
+        this.prePanMove = false;
         break;
     }
   }
@@ -365,13 +366,14 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
         // console.log(t % howTimes);
         // const persent = ;
         // console.log(persent);
-        this.progressBar.nativeElement.style.width = `${(t % howTimes) * everyIncrease}%`;
+        if (this.isProgress)
+          this.progressBar.nativeElement.style.width = `${(t % howTimes) * everyIncrease}%`;
       })
       .bufferCount(Math.round(this.speed / betweenTime), 0);
   }
 }
 
-export enum RUN_DIRECTION {
+enum RUN_DIRECTION {
   LEFT = 'left',
   RIGHT = 'right'
 }

@@ -2,9 +2,11 @@
 <carousel-container
   [current-index]="index"
   [mourse-enable]="false"
+  [progress]="true"
+  [drag-many]="false"
   [autoplay]="enable"
-  [infinite]="enable"
-  [show-num]="4"
+  [infinite]="false"
+  [show-num]="5"
   [scroll-num]="1"
   [autoplay-speed]="3000"
   [autoplay-direction]="direction"
@@ -13,16 +15,14 @@
     carousel-items-container
     class="pane-container">
     <article class="pane"
+      *ngFor="let avatar of avatars;let i = index;"
       carousel-item
-      (carousel-item-click)="cc(avatar)"
-      [style.backgroundImage]="avatar.image | safe:'background-image' "
-      *ngFor="let avatar of avatars">
-      <!-- {{avatar.name}}
-      <img [src]="avatar.image" [alt]="avatar.name" style="height:100px;"> -->
+      (carousel-item-click)="cc(avatar,i)"
+      [style.backgroundImage]="avatar.image | safe:'background-image'">
       <div class="inner">
         <header>
           <p>gogogo</p>
-          <h2>{{avatar.name}}</h2>
+          <h2>{{i}}</h2>
           <p>gogogo</p>
         </header>
       </div>
@@ -31,7 +31,6 @@
   <i carousel-prev class="material-icons" style="font-size:50px;">keyboard_arrow_left</i>
   <i carousel-next class="material-icons" style="font-size:50px;">keyboard_arrow_right</i>
   <ng-template #carouselDot let-model>
-      <!-- <button>cool</button>{{number}} -->
       <div class="ball"
         [class.visible]="model.index === model.currentIndex"></div>
   </ng-template>

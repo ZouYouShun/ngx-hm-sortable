@@ -1,14 +1,17 @@
 <div #parentChild class="carousel">
   <ng-content select="[carousel-items-container]"></ng-content>
-  <!-- left and right -->
-  <div #prev class="direction left">
+  <!-- left -->
+  <div #prev *ngIf="contentPrev"
+    class="direction left">
     <ng-content select="[carousel-prev]"></ng-content>
   </div>
-  <div #next class="direction right">
+  <!--  right -->
+  <div #next *ngIf="contentNext"
+    class="direction right">
     <ng-content select="[carousel-next]"></ng-content>
   </div>
   <!-- indicators -->
-  <ul class="indicators">
+  <ul class="indicators" *ngIf="dotElm">
     <li
       *ngFor="let dot of dots; let i = index;"
       (click)="setIndex(i)">
@@ -21,5 +24,6 @@
     </li>
   </ul>
   <!-- progress -->
-  <div class="progress" #progressBar></div>
+  <div #progressBar *ngIf="isProgress"
+    class="progress"></div>
 </div>

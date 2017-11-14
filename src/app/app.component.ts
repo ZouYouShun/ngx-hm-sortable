@@ -40,6 +40,303 @@ export class AppComponent implements OnInit {
       name: '5',
       image: 'assets/img/slide05.jpg',
       visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
+    }, {
+      name: '4',
+      image: 'assets/img/slide04.jpg',
+      visible: false
+    },
+    {
+      name: '5',
+      image: 'assets/img/slide05.jpg',
+      visible: false
     },
   ];
   constructor() {
@@ -53,7 +350,7 @@ export class AppComponent implements OnInit {
   cdirection() {
     this.direction = this.direction === RUN_DIRECTION.LEFT ? RUN_DIRECTION.RIGHT : RUN_DIRECTION.LEFT;
   }
-  cc(avatar) {
-    alert(JSON.stringify(avatar));
+  cc(avatar, index) {
+    alert(index);
   }
 }
