@@ -147,8 +147,13 @@ img {
     height: 90%;
     max-width: 95%;
   }
+
+  .pane-container{
+    margin: 0;
+  }
   .pane-container .control_pane {
     width: 7em;
+    height: 8em;
   }
 }
 
@@ -162,8 +167,12 @@ img {
     max-width: 95%;
   }
 
+  .pane-container{
+    margin: 0;
+  }
   .pane-container .control_pane {
     width: 4em;
+    height: 5em;
   }
 }
 
