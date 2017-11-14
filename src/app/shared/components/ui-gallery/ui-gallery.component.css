@@ -102,19 +102,16 @@ img {
 
   /* 暫時不跑版用的css */
   margin-bottom: -17px;
-
   position: absolute;
   overflow: auto;
   bottom: 0;
-  white-space: nowrap;
-  flex-wrap: wrap;
   width: 100%;
-  text-align: left;
   padding: 0;
 }
 
 .pane-container .control_pane {
   width: 10em;
+  height: 10em;
   margin: 0 0.5em;
   border: 3px solid white;
   cursor: pointer;
