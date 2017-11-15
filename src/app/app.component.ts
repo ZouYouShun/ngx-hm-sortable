@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-import { RUN_DIRECTION } from './shared/directive/carousel.directive';
+import { RUN_DIRECTION } from './shared/modules/hm-carousel/component/carousel.component';
 
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = 0.25;

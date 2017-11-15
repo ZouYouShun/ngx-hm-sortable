@@ -380,7 +380,7 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   }
 }
 
-enum RUN_DIRECTION {
+export enum RUN_DIRECTION {
   LEFT = 'left',
   RIGHT = 'right'
 }

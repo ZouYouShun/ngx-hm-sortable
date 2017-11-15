@@ -3,9 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { UiTreeComponent } from './components/ui-tree/ui-tree.component';
-import { CarouselDirective } from './directive/carousel.directive';
 import { DragScrollDirective } from './directive/drag-scroll/drag-scroll.directive';
-import { HmDirective } from './directive/sortable.directive';
+import { HmSortableDirective } from './directive/sortable.directive';
 import { HmCarouselModule } from './modules/hm-carousel/hm-carousel.module';
 import { SafePipe } from './pipes/safe.pipe';
 
@@ -17,14 +16,12 @@ import { SafePipe } from './pipes/safe.pipe';
   ],
   declarations: [
     UiTreeComponent,
-    HmDirective,
-    CarouselDirective,
+    HmSortableDirective,
     DragScrollDirective,
     SafePipe
   ],
   exports: [
     UiTreeComponent,
-    CarouselDirective,
     DragScrollDirective,
     SafePipe,
     HmCarouselModule

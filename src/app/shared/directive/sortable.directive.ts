@@ -5,7 +5,7 @@ import { elementsFromPoint, insertAfter, removeElement } from '../ts';
 @Directive({
   selector: '[hm-sortable]'
 })
-export class HmDirective implements AfterViewInit, OnDestroy {
+export class HmSortableDirective implements AfterViewInit, OnDestroy {
 
   @Input('hm-sortable') sourceObj;
   @Input('hm-sortable-id') sourceId;
