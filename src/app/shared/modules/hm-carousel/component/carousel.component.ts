@@ -8,23 +8,23 @@ import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
 
+import { DOCUMENT } from '@angular/common';
 import {
-  AfterContentInit,
-  AfterViewInit,
-  Component,
-  ContentChild,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  NgZone,
-  OnDestroy,
-  Output,
-  Renderer2,
-  TemplateRef,
-  ViewChild,
-  ViewEncapsulation,
-  Inject,
+    AfterContentInit,
+    AfterViewInit,
+    Component,
+    ContentChild,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Inject,
+    Input,
+    OnDestroy,
+    Output,
+    Renderer2,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation,
 } from '@angular/core';
 import { ContentChildren } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -32,9 +32,8 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { CarouselItemDirective } from '../directive/carousel-item.directive';
 import { getScrollbarWidth } from '../../../ts/getScrollBarHeight';
-import { DOCUMENT } from '@angular/common';
+import { CarouselItemDirective } from '../directive/carousel-item.directive';
 
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = 0.15;
@@ -126,7 +125,6 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   }
 
   constructor(
-    private _zone: NgZone,
     private _renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document) { }
 
