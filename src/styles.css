@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+/*
+img {
+  pointer-events: none
+}
+
+.pane-container {
+  height: 100%;
+  width: 100%;
+  list-style: none;
+  background-color: #ddd;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.pane-container.transition {
+  transition: left .4s ease-in-out;
+}
+
+.pane {
+  display: inline-block;
+  text-align: center;
+} */
+
+
+body{
+  margin: 0;
+}
+
+@import '/assets/fonts/photo/style.css';

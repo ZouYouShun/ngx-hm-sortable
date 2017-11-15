@@ -10,21 +10,21 @@ import 'rxjs/add/operator/takeUntil';
 
 import { DOCUMENT } from '@angular/common';
 import {
-    AfterContentInit,
-    AfterViewInit,
-    Component,
-    ContentChild,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    Inject,
-    Input,
-    OnDestroy,
-    Output,
-    Renderer2,
-    TemplateRef,
-    ViewChild,
-    ViewEncapsulation,
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  ContentChild,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Inject,
+  Input,
+  OnDestroy,
+  Output,
+  Renderer2,
+  TemplateRef,
+  ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { ContentChildren } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -152,7 +152,9 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
     this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
     this.itemsElm = Array.from(this.containerElm.children) as HTMLAnchorElement[];
     this.mostRightIndex = this.itemsElm.length - this.showNum;
-    this.dots = new Array(this.itemsElm.length - (this.showNum - 1)).map((x, i) => i);
+    if (this.dotElm) {
+      this.dots = new Array(this.itemsElm.length - (this.showNum - 1)).map((x, i) => i);
+    }
 
     let startEvent: any = this.restart; // .merge(this.mourseLeave); // .map(() => console.log('start'))
     let stopEvent: any = this.stopEvent;

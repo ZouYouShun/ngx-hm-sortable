@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { UiTreeComponent } from './components/ui-tree/ui-tree.component';
@@ -7,24 +7,28 @@ import { DragScrollDirective } from './directive/drag-scroll/drag-scroll.directi
 import { HmSortableDirective } from './directive/sortable.directive';
 import { HmCarouselModule } from './modules/hm-carousel/hm-carousel.module';
 import { SafePipe } from './pipes/safe.pipe';
+import { UiGalleryComponent } from './components/ui-gallery/ui-gallery.component';
 
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    HmCarouselModule,
   ],
   declarations: [
     UiTreeComponent,
     HmSortableDirective,
     DragScrollDirective,
-    SafePipe
+    SafePipe,
+    UiGalleryComponent
   ],
   exports: [
     UiTreeComponent,
     DragScrollDirective,
     SafePipe,
-    HmCarouselModule
+    HmCarouselModule,
+    UiGalleryComponent,
   ]
 })
 export class SharedModule { }

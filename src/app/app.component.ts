@@ -352,4 +352,20 @@ export class AppComponent implements OnInit {
   cc(avatar, index) {
     alert(index);
   }
+
+  prev() {
+    if (this.index === 0) {
+      this.index = this.avatars.length - 1;
+      return;
+    }
+    this.index--;
+  }
+
+  next() {
+    if (this.index === this.avatars.length - 1) {
+      this.index = 0;
+      return;
+    }
+    this.index++;
+  }
 }

@@ -10,6 +10,7 @@ import {
   OnInit,
   Output,
   Renderer2,
+  AfterViewInit,
 } from '@angular/core';
 
 import { DragScrollOption } from './interface/drag-scroll-option';
@@ -17,7 +18,8 @@ import { DragScrollOption } from './interface/drag-scroll-option';
 @Directive({
   selector: '[drag-scroll]'
 })
-export class DragScrollDirective implements OnDestroy, OnInit, OnChanges, DoCheck {
+export class DragScrollDirective implements OnDestroy, OnInit, OnChanges, DoCheck, AfterViewInit {
+
 
   @Output() reachesLeftBound = new EventEmitter<boolean>();
 
@@ -138,7 +140,7 @@ export class DragScrollDirective implements OnDestroy, OnInit, OnChanges, DoChec
     private renderer: Renderer2
   ) {
     this.scrollbarWidth = `${this.getScrollbarWidth()}px`;
-    el.nativeElement.style.overflow = 'auto';
+    // el.nativeElement.style.overflow = 'auto';
     el.nativeElement.style.whiteSpace = 'noWrap';
 
     this.mouseDownListener = renderer.listen(el.nativeElement, 'mousedown', this.onMouseDownHandler);
@@ -154,6 +156,13 @@ export class DragScrollDirective implements OnDestroy, OnInit, OnChanges, DoChec
     this.xDisabled = xDisabled;
     this.ngOnChanges();
   }
+
+  ngAfterViewInit(): void {
+    if (this.el.nativeElement.scrollWidth > 0) {
+      this.el.nativeElement.style.marginBottom = `-${this.scrollbarWidth}`;
+    }
+  }
+
 
   ngOnChanges() {
     this.setScrollBar();
