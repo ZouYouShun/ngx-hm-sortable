@@ -31,10 +31,10 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { CarouselItemDirective } from '../../directive/carousel-item.directive';
-import { CarouselNextDirective } from '../../directive/carousel-next.directive';
-import { CarouselPrevDirective } from '../../directive/carousel-prev.directive';
-import { getScrollbarWidth } from '../../ts/getScrollBarHeight';
+import { CarouselItemDirective } from '../directive/carousel-item.directive';
+import { CarouselNextDirective } from '../directive/carousel-next.directive';
+import { CarouselPrevDirective } from '../directive/carousel-prev.directive';
+import { getScrollbarWidth } from '../../../ts/getScrollBarHeight';
 
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = 0.15;
@@ -50,10 +50,11 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   @ViewChild('progressBar') progressBar;
   @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
   @ContentChild('carouselDot') dotElm: TemplateRef<any>;
-  @ViewChild('prev') private btnPrev: ElementRef;
-  @ViewChild('next') private btnNext: ElementRef;
+  // @ContentChild('carouselProgress') dotElm: TemplateRef<any>;
   @ContentChild(CarouselPrevDirective) contentPrev: ElementRef;
   @ContentChild(CarouselNextDirective) contentNext: ElementRef;
+  @ViewChild('prev') private btnPrev: ElementRef;
+  @ViewChild('next') private btnNext: ElementRef;
 
   // @Input('center-mode') centerMode = false;
   @Input('progress') isProgress = false;
