@@ -24,6 +24,7 @@ import {
   TemplateRef,
   ViewChild,
   ViewEncapsulation,
+  Inject,
 } from '@angular/core';
 import { ContentChildren } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -32,9 +33,8 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CarouselItemDirective } from '../directive/carousel-item.directive';
-import { CarouselNextDirective } from '../directive/carousel-next.directive';
-import { CarouselPrevDirective } from '../directive/carousel-prev.directive';
 import { getScrollbarWidth } from '../../../ts/getScrollBarHeight';
+import { DOCUMENT } from '@angular/common';
 
 // if the pane is paned .25, switch to the next pane.
 const PANBOUNDARY = 0.15;
@@ -46,18 +46,6 @@ const PANBOUNDARY = 0.15;
   encapsulation: ViewEncapsulation.None
 })
 export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDestroy {
-  @ViewChild('parentChild') parentChild;
-  @ViewChild('progressBar') progressBar;
-  @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
-  @ContentChild('carouselDot') dotElm: TemplateRef<any>;
-  // @ContentChild('carouselProgress') dotElm: TemplateRef<any>;
-  @ContentChild(CarouselPrevDirective) contentPrev: ElementRef;
-  @ContentChild(CarouselNextDirective) contentNext: ElementRef;
-  @ViewChild('prev') private btnPrev: ElementRef;
-  @ViewChild('next') private btnNext: ElementRef;
-
-  // @Input('center-mode') centerMode = false;
-  @Input('progress') isProgress = false;
   @Input('infinite') infinite = false;
   @Input('mourse-enable') mourseEnable = false;
   @Input('autoplay-speed') speed = 5000;
@@ -81,7 +69,7 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   @Input('autoplay')
   set autoplay(value) {
     if (this.itemsElm) {
-      if (this.isProgress) this.progressBar.nativeElement.style.width = `0%`;
+      this.progressWidth = 0;
       if (value) {
         this.sub$ = this.doNext.subscribe();
       } else {
@@ -95,10 +83,27 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   }
 
   @Output('index-change') indexChanged = new EventEmitter();
+  @ViewChild('parentChild') parentChild;
+  @ViewChild('prev') private btnPrev: ElementRef;
+  @ViewChild('next') private btnNext: ElementRef;
+  @ContentChildren(CarouselItemDirective) items: CarouselItemDirective[];
+  @ContentChild('carouselPrev') contentPrev: TemplateRef<any>;
+  @ContentChild('carouselNext') contentNext: TemplateRef<any>;
+  @ContentChild('carouselDot') dotElm: TemplateRef<any>;
+  @ContentChild('carouselProgress') progressElm: TemplateRef<any>;
+  private _porgressWidth = 0;
+  set progressWidth(value) {
+    if (this.progressElm !== undefined && this.autoplay) {
+      this._porgressWidth = value;
+    }
+  }
+  get progressWidth() {
+    return this._porgressWidth;
+  }
 
   private rootElm: HTMLAnchorElement;
   private containerElm: HTMLAnchorElement;
-  private itemsElm: Array<Element>;
+  private itemsElm: Array<HTMLAnchorElement>;
   private hammer: HammerManager;
   private elmWidth = 0;
 
@@ -122,10 +127,12 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
 
   constructor(
     private _zone: NgZone,
-    private _renderer: Renderer2) { }
+    private _renderer: Renderer2,
+    @Inject(DOCUMENT) private document: Document) { }
 
   ngAfterContentInit(): void {
     this.initVariable();
+    console.log(this.progressElm);
   }
 
   ngAfterViewInit() {
@@ -133,15 +140,6 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
     this.hammer = this.bindHammer();
     this.drawView(this.currentIndex);
     this.bindClick();
-  }
-
-  private bindClick() {
-    this._renderer.listen(this.btnNext.nativeElement, 'click', () => {
-      this.setIndex(this.currentIndex + 1);
-    });
-    this._renderer.listen(this.btnPrev.nativeElement, 'click', () => {
-      this.setIndex(this.currentIndex - 1);
-    });
   }
 
   ngOnDestroy() {
@@ -154,7 +152,7 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
   private initVariable() {
     this.rootElm = this.parentChild.nativeElement;
     this.containerElm = this.rootElm.children[0] as HTMLAnchorElement;
-    this.itemsElm = Array.from(this.containerElm.children);
+    this.itemsElm = Array.from(this.containerElm.children) as HTMLAnchorElement[];
     this.mostRightIndex = this.itemsElm.length - this.showNum;
     this.dots = new Array(this.itemsElm.length - (this.showNum - 1)).map((x, i) => i);
 
@@ -186,7 +184,7 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
           })
           .takeUntil(stopEvent.map(() => {
             // console.log('stop');
-            if (this.isProgress) this.progressBar.nativeElement.style.width = `0%`;
+            this.progressWidth = 0;
           }))
       );
 
@@ -199,51 +197,63 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
     this.containerElm.classList.add('grab');
     // when init check view has scroll bar
     let totalWidth = 0;
-    if (isInit && this.containerElm.scrollHeight > 0) {
-      totalWidth += getScrollbarWidth();
+    if (isInit) {
+      // set all element width to 0, remain one elm to see now scrollheight
+      for (let i = 1; i < this.itemsElm.length; i++) {
+        this.itemsElm[i].style.width = `0px`;
+      }
+      if (this.document.scrollingElement.scrollTop > 0) {
+        totalWidth += getScrollbarWidth();
+      }
     }
-
     this.elmWidth = (totalWidth + this.rootElm.clientWidth) / this.showNum;
+    this.containerElm.style.width = `${this.elmWidth * this.itemsElm.length}px`;
 
     this.containerElm.style.position = 'relative';
     this.itemsElm.forEach((elm: HTMLAnchorElement, index) => {
       elm.style.width = `${this.elmWidth}px`;
     });
-
-    this.containerElm.style.width = `${this.elmWidth * this.itemsElm.length}px`;
   }
 
   private bindHammer() {
     const hm = new Hammer(this.containerElm);
-    hm.get('pan').set({ threshold: 50, direction: Hammer.DIRECTION_HORIZONTAL });
+    hm.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL });
 
     hm.on('panleft panright panend pancancel tap', (e: HammerInput) => {
-      this._zone.runOutsideAngular(() => {
-        this.containerElm.classList.remove('transition');
-        this.containerElm.classList.add('grabbing');
-        if (this.autoplay) {
-          this.stopEvent.next();
-        }
-        switch (e.type) {
-          case 'tap':
-            this.callClick(e.center.x);
-            this.callRestart();
-            this.containerElm.classList.remove('grabbing');
-            break;
-          case 'panend':
-          case 'pancancel':
-            this.containerElm.classList.remove('grabbing');
-          // tslint:disable-next-line:no-switch-case-fall-through
-          case 'panleft':
-          case 'panright':
-            this.handlePan(e);
-            break;
-        }
-
-      });
+      this.containerElm.classList.remove('transition');
+      this.containerElm.classList.add('grabbing');
+      if (this.autoplay) {
+        this.stopEvent.next();
+      }
+      switch (e.type) {
+        case 'tap':
+          this.callClick(e.center.x);
+          this.callRestart();
+          this.containerElm.classList.remove('grabbing');
+          break;
+        case 'panend':
+        case 'pancancel':
+          this.containerElm.classList.remove('grabbing');
+        // tslint:disable-next-line:no-switch-case-fall-through
+        case 'panleft':
+        case 'panright':
+          this.handlePan(e);
+          break;
+      }
     });
 
     return hm;
+  }
+
+  private bindClick() {
+    if (this.btnNext && this.btnPrev) {
+      this._renderer.listen(this.btnNext.nativeElement, 'click', () => {
+        this.setIndex(this.currentIndex + 1);
+      });
+      this._renderer.listen(this.btnPrev.nativeElement, 'click', () => {
+        this.setIndex(this.currentIndex - 1);
+      });
+    }
   }
 
   private callRestart() {
@@ -366,9 +376,7 @@ export class CarouselComponent implements AfterViewInit, AfterContentInit, OnDes
       .map(t => {
         // console.log(t % howTimes);
         // const persent = ;
-        // console.log(persent);
-        if (this.isProgress)
-          this.progressBar.nativeElement.style.width = `${(t % howTimes) * everyIncrease}%`;
+        this.progressWidth = (t % howTimes) * everyIncrease;
       })
       .bufferCount(Math.round(this.speed / betweenTime), 0);
   }

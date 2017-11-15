@@ -2,7 +2,6 @@
 <carousel-container
   [current-index]="index"
   [mourse-enable]="false"
-  [progress]="true"
   [drag-many]="false"
   [autoplay]="enable"
   [infinite]="false"
@@ -28,21 +27,27 @@
       </div>
     </article>
   </section>
-  <i carousel-prev class="material-icons" style="font-size:50px;">keyboard_arrow_left</i>
-  <i carousel-next class="material-icons" style="font-size:50px;">keyboard_arrow_right</i>
+
+  <ng-template  #carouselPrev>
+    <i class="material-icons" style="font-size:50px;">keyboard_arrow_left</i>
+  </ng-template>
+
+  <ng-template #carouselNext>
+    <i class="material-icons" style="font-size:50px;">keyboard_arrow_right</i>
+  </ng-template>
+
   <ng-template #carouselDot let-model>
       <div class="ball"
         [class.visible]="model.index === model.currentIndex"></div>
   </ng-template>
+
   <ng-template #carouselProgress let-model>
-      <div class="ball"
-        [class.visible]="model.index === model.currentIndex"></div>
+      <div class="progress" [style.width]="model.progress + '%'"></div>
   </ng-template>
 </carousel-container>
 
 <input type="checkbox" [(ngModel)]="enable">
 <button (click)="cdirection()">{{direction}}</button>
-
 <br/>
 <br/>
 <br/>

@@ -6,8 +6,8 @@ import { UiTreeComponent } from './components/ui-tree/ui-tree.component';
 import { CarouselDirective } from './directive/carousel.directive';
 import { DragScrollDirective } from './directive/drag-scroll/drag-scroll.directive';
 import { HmDirective } from './directive/sortable.directive';
-import { SafePipe } from './pipes/safe.pipe';
 import { HmCarouselModule } from './modules/hm-carousel/hm-carousel.module';
+import { SafePipe } from './pipes/safe.pipe';
 
 
 @NgModule({

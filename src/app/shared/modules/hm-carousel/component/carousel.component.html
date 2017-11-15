@@ -3,12 +3,12 @@
   <!-- left -->
   <div #prev *ngIf="contentPrev"
     class="direction left">
-    <ng-content select="[carousel-prev]"></ng-content>
+    <ng-container *ngTemplateOutlet="contentPrev"></ng-container>
   </div>
   <!--  right -->
   <div #next *ngIf="contentNext"
     class="direction right">
-    <ng-content select="[carousel-next]"></ng-content>
+    <ng-container *ngTemplateOutlet="contentNext"></ng-container>
   </div>
   <!-- indicators -->
   <ul class="indicators" *ngIf="dotElm">
@@ -20,10 +20,17 @@
           $implicit: {
             index : i,
             currentIndex : currentIndex}
-          }"></ng-container>
+          }">
+      </ng-container>
     </li>
   </ul>
   <!-- progress -->
-  <div #progressBar *ngIf="isProgress"
-    class="progress"></div>
+  <div *ngIf="progressElm && autoplay">
+    <ng-container
+      *ngTemplateOutlet="progressElm, context: {
+        $implicit: {
+          progress:progressWidth
+        }}">
+    </ng-container>
+  </div>
 </div>
