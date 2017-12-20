@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "name": "demo20171103"
+    "name": "ngx-hm-sortable"
   },
   "apps": [
     {
@@ -19,9 +19,6 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "assets/css/normalize.css",
-        "assets/css/material_theme.scss",
-        "assets/css/theme.scss",
         "styles.scss"
       ],
       "scripts": [],
