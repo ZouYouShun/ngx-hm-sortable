@@ -1,0 +1,154 @@
+@import './variable.scss';
+.board {
+  position: relative;
+  width: $box-height;
+  height: $box-height;
+  max-width: 80vh;
+  max-height: 80vh;
+  overflow: hidden;
+  background: $back-color;
+  /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 1) 0%, rgba(19, 19, 19, 1) 80%);
+  /* FF3.6-15 */
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 1) 0%, rgba(19, 19, 19, 1) 80%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(19, 19, 19, 1) 80%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  background-size: 100% 100%;
+  border: 2px solid #b39778;
+}
+
+.function-area {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 20%;
+  min-width: 255px;
+  overflow-y: auto;
+  background: #424242;
+  z-index: $box-zIndex + 3;
+  box-shadow: -3px 0 6px rgba(0, 0, 0, 0.24);
+}
+
+@media (max-width: 768px) {
+  .board {
+    width: 100vw;
+    height: 100vw;
+  }
+}
+
+.rightTop {
+  position: absolute !important;
+  right: 0;
+  top: 0;
+  z-index: $box-zIndex + 4;
+}
+
+.overlay {
+  display: grid;
+  grid-template-columns: $grid-template-columns;
+  grid-template-rows: $grid-template-rows;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  &:hover {
+    .block {
+      &.icon {
+        cursor: grab;
+      }
+      background-color: white;
+      &.area {
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+  &.mask {
+    z-index: $box-zIndex + 1;
+    background: rgba(0, 0, 0, 0.50)
+  }
+  &.transparent {
+    background: transparent;
+  }
+}
+
+.box {
+  z-index: $box-zIndex;
+  box-shadow: 0 0 10px white;
+  background-color: $box-color;
+  border: 1px solid #FFFFFF;
+  background-size: calc(10vw - 4px); // &:hover {
+  //   background-color: #30CC93;
+  // }
+}
+
+.block {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: $box-zIndex + 1;
+  box-sizing: border-box;
+  &.map {
+    border: 2px solid black;
+  }
+}
+
+.bg {
+  background-color: #e2b885; // animation: scroll 6s linear infinite;
+  // border: 5px solid rgba(255, 255, 255, 0.4);
+  // border-width: 3px 5px 5px 3px;
+  width: 100%;
+  height: 100%; // background-position: left top;
+  // background-size: calc(10vw - 4px);
+}
+
+.img-container {
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.action-container {
+  position: absolute;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  z-index: $box-zIndex + 2;
+  width: 150px;
+  height: 20px;
+  .img {
+    position: relative;
+    width: 20%;
+    display: inline-block;
+    background-color: transparent
+  }
+}
+
+.flex-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.shiny-box {
+  box-shadow: white 0px 0px 3px 2px
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.personal-img {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-size: cover;
+}
+
+.inline-block {
+  display: inline-block;
+}
