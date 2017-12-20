@@ -15,7 +15,26 @@ export class AppComponent {
   }
 
   complete($event) {
-    alert($event);
+    console.log($event);
   }
 
+  add() {
+    this.viewChange(() => {
+      this.list.push(this.list.length + 1);
+    });
+  }
+  delete() {
+    this.viewChange(() => {
+      this.list.splice(this.list.length - 1, 1);
+    });
+  }
+
+  viewChange(cb: Function) {
+    const tmp = this.enable;
+    this.enable = false;
+    cb();
+    setTimeout(() => {
+      this.enable = tmp;
+    }, 0);
+  }
 }
