@@ -2,6 +2,8 @@
 
 Angular sortable with hammerjs, support SSR(server side rendering).
 
+## [Demo](https://zouyoushun.github.io/ngx-hm-sortable/)
+![](https://res.cloudinary.com/dw7ecdxlp/image/upload/sortable_gxplzv.gif)
 ## Install
 
 1. install
