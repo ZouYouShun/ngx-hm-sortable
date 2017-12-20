@@ -1,21 +1,18 @@
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { SharedModule } from './shared/shared.module';
+import { NgxHmSortableDirective } from './ngx-hm-sortable/directive/ngx-hm-sortable.directive';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NgxHmSortableDirective
   ],
   imports: [
     BrowserModule,
-    FormsModule,
-    SharedModule,
   ],
   providers: [],
-  schemas: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,15 +1,15 @@
-export function elementsFromPoint(x: number, y: number, cd: (elm: Element) => boolean) {
+export function elementsFromPoint(thisDocument: Document, x: number, y: number, cb: (elm: Element) => boolean) {
   return new Promise((resolve, reject) => {
     const checkedElm = [], elmsStyle = [];
     let elm, i, d, getElm;
 
     // get all elements via elementFromPoint, and remove them from hit-testing in order
-    while ((elm = document.elementFromPoint(x, y))
+    while ((elm = thisDocument.elementFromPoint(x, y))
       && checkedElm.indexOf(elm) === -1 && elm != null) {
 
       // push the element and its current style
       checkedElm.push(elm);
-      if (cd(elm)) {
+      if (cb(elm)) {
         getElm = elm;
         break;
       }
