@@ -10,7 +10,12 @@ const PANBOUNDARY = 0.25;
 export class AppComponent {
 
   list = [1, 2, 3, 4, 5];
+  enable = true;
   constructor() {
+  }
+
+  complete($event) {
+    alert($event);
   }
 
 }
