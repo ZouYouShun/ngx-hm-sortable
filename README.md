@@ -1,4 +1,4 @@
-# ngx-hm-sortable
+# ngx-hm-sortable [GitHub](https://github.com/ZouYouShun/ngx-hm-sortable)
 
 Angular sortable with hammerjs, support SSR(server side rendering).
 
@@ -17,11 +17,11 @@ npm install ngx-hm-sortable
 1. Module
 
 ```ts
-import { SortableModule } from './sortable/sortable.module';
+import { NgxHmSortableModule } from 'ngx-hm-sortable';
 
 @NgModule({
   declarations: [ ...something... ],
-  imports: [ ...something... , SortableModule],
+  imports: [ ...something... , NgxHmSortableModule],
   providers: [ ...something... ],
   bootstrap: [ ...something... ]
 })
