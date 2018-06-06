@@ -1,5 +1,7 @@
 # ngx-hm-sortable [GitHub](https://github.com/ZouYouShun/ngx-hm-sortable)
 
+Upgrade to Angular 6+ and Rxjs6+
+
 Angular sortable with hammerjs, support SSR(server side rendering).
 
 ## [Demo](https://zouyoushun.github.io/ngx-hm-sortable/)

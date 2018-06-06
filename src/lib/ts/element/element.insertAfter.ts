@@ -6,6 +6,6 @@ export function insertAfter(_render: Renderer2, newEl, targetEl) {
   if (parentEl.lastChild === targetEl) {
     _render.appendChild(parentEl, newEl);
   } else {
-    _render.insertBefore(parentEl, newEl, targetEl.nextSibling);
+    _render.insertBefore(parentEl, newEl, targetEl.nextSibling); // nextSibling 下一個
   }
 }

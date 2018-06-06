@@ -1,4 +1,5 @@
-export function elementsFromPoint(thisDocument: Document, x: number, y: number, cb: (elm: Element) => boolean) {
+export function elementsFromPoint(thisDocument: Document, x: number, y: number,
+  cb: (elm: HTMLElement) => boolean, cancel?: (elm: HTMLElement) => boolean) {
   return new Promise((resolve, reject) => {
     const checkedElm = [], elmsStyle = [];
     let elm, i, d, getElm;
@@ -6,6 +7,11 @@ export function elementsFromPoint(thisDocument: Document, x: number, y: number, 
     // get all elements via elementFromPoint, and remove them from hit-testing in order
     while ((elm = thisDocument.elementFromPoint(x, y))
       && checkedElm.indexOf(elm) === -1 && elm != null) {
+
+      if (cancel && cancel(elm)) {
+        reject('ddd');
+        break;
+      }
 
       // push the element and its current style
       checkedElm.push(elm);
