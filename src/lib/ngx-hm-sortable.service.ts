@@ -111,7 +111,7 @@ export class NgxHmSortableService {
     this._renderer.setAttribute(elm, appendedKey, '');
     const top = this._renderer.createElement('div');
     setStyle(this._renderer, top, {
-      // background: 'black',
+      background: 'black',
       position: 'absolute',
       width: '100%',
       height: `${maskHeight}px`,
@@ -123,7 +123,7 @@ export class NgxHmSortableService {
 
     const bottom = this._renderer.createElement('div');
     setStyle(this._renderer, bottom, {
-      // background: 'black',
+      background: 'black',
       position: 'absolute',
       width: '100%',
       height: `${maskHeight}px`,

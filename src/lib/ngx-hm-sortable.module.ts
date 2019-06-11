@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import { NgxHmSortableDirective } from './ngx-hm-sortable.directive';
 
